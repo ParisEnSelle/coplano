@@ -1,3 +1,16 @@
+// Utility functions
+function displayText(sentence) {
+  let p = document.createElement("p");
+  p.innerHTML = sentence;
+	let div = document.getElementById("rat-run-output");
+  div.appendChild(p);
+}
+
+function printOutput(text) {
+  displayText(text);
+  console.log(text);
+}
+
 // Street Plan
 transitStreet = [
     [[1,1]],
