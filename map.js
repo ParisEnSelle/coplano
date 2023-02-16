@@ -41,6 +41,13 @@ function parsePoints(points) {
     return pointsDictionary;
 }
 
+var arrowSettings = {
+  size: '15px',
+  //frequency: '100px',
+  fill: true,
+  yawn: 30
+};
+
 function drawStreets(pointDictionary) {
     // add segments for all local streets
     console.log("drawing streets...");
@@ -54,12 +61,7 @@ function drawStreets(pointDictionary) {
                     p_end = pointDictionary[n];
                     way_end = L.latLng(p_end.lat, p_end.long);
                     console.log("way #", counter, ": from ", p.id, way_start.toString(), " to ", p_end.id, way_end.toString());
-                    var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads({
-    size: '15px',
-    //frequency: '100px',
-    fill: true,
-    yawn: 30
-  }).on('click', function() {
+                    var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', function() {
                         // Change the color of the polyline
                         console.log("clicked on way #", counter, ": from ", p.id, way_start.toString(), " to ", p_end.id, way_end.toString(), " !!!");
                         polyline.setLatLngs(polyline.getLatLngs().reverse());
