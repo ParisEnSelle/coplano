@@ -50,8 +50,19 @@ var arrowSettings = {
 
 function reverseArrow(ev) {
     var polyline = ev.target;
-    var latLngs = polyline.getLatLngs()
-    polyline.setLatLngs(polyline.getLatLngs().reverse());
+
+    // Change the color of the polyline
+    var arrowColor;
+    if (polyline._reverse) {
+        arrowColor = "blue";
+        polyline._reverse = false;
+    } else {
+        arrowColor = "red";
+        polyline._reverse = true;
+    }
+
+    polyline.setStyle({color : arrowColor});
+    polyline.setLatLngs(polyline.getLatLngs().reverse()); // also applies the style changes to the arrowhead
 }
 
 function drawStreets(pointDictionary) {
@@ -68,6 +79,7 @@ function drawStreets(pointDictionary) {
                     way_end = L.latLng(p_end.lat, p_end.long);
                     console.log("way #", counter, ": from ", p.id, way_start.toString(), " to ", p_end.id, way_end.toString());
                     var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow).addTo(map);
+                    polyline['_reverse'] = false;
                     counter = counter + 1;
                 }
             }
