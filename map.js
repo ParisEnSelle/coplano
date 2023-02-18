@@ -65,6 +65,11 @@ function reverseArrow(ev) {
     polyline.setLatLngs(polyline.getLatLngs().reverse()); // also applies the style changes to the arrowhead
 }
 
+function refreshLayers() {
+    map.eachLayer(function(layer){ layers[layer._leaflet_id] = layer});
+    console.log(Object.keys(layers).length, "layers found");
+}
+
 function drawStreets(pointDictionary) {
     // add segments for all local streets
     console.log("drawing streets...");
@@ -86,6 +91,7 @@ function drawStreets(pointDictionary) {
         }
         //console.log(pointDictionary[key]);
     }
+    refreshLayers();
 }
 
 fileInput.addEventListener('change', function() {
@@ -111,3 +117,6 @@ point2.neighbors.push(1);
 let a = { 1: point1, 2: point2};
 //console.log(a);
 //drawStreets(a);
+
+
+layers = {};
