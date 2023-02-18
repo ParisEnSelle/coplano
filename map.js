@@ -48,6 +48,12 @@ var arrowSettings = {
   yawn: 30
 };
 
+function reverseArrow(ev) {
+    var polyline = ev.target;
+    var latLngs = polyline.getLatLngs()
+    polyline.setLatLngs(polyline.getLatLngs().reverse());
+}
+
 function drawStreets(pointDictionary) {
     // add segments for all local streets
     console.log("drawing streets...");
@@ -61,16 +67,7 @@ function drawStreets(pointDictionary) {
                     p_end = pointDictionary[n];
                     way_end = L.latLng(p_end.lat, p_end.long);
                     console.log("way #", counter, ": from ", p.id, way_start.toString(), " to ", p_end.id, way_end.toString());
-                    var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', function() {
-                        // Change the color of the polyline
-                        console.log("clicked on way #", counter, ": from ", p.id, way_start.toString(), " to ", p_end.id, way_end.toString(), " !!!");
-                        polyline.setLatLngs(polyline.getLatLngs().reverse());
-                        if (polyline.options.color === 'red') {
-                            polyline.setStyle({color: 'blue'});
-                        } else {
-                            polyline.setStyle({color: 'red'});
-                        }
-                    }).addTo(map);
+                    var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow).addTo(map);
                     counter = counter + 1;
                 }
             }
