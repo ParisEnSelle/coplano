@@ -20,7 +20,6 @@ class Point {
 }
 
 let dict = {};
-let counter = 1;
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
 
@@ -67,11 +66,6 @@ function reverseArrow(ev) {
     polyline.setLatLngs(polyline.getLatLngs().reverse()); // also applies the style changes to the arrowhead
 }
 
-function refreshLayers() {
-    map.eachLayer(function(layer){ layers[layer._leaflet_id] = layer});
-    console.log(Object.keys(layers).length, "layers found");
-}
-
 function drawStreets(pointDictionary) {
     // add segments for all local streets
     console.log("drawing streets...");
@@ -81,14 +75,13 @@ function drawStreets(pointDictionary) {
         way_start = L.latLng(p.lat, p.long);
         if (p.neighbors.length > 0) {
             for (let n of p.neighbors) {
-                if (n>0) { // TODO: cleanup
+                if (n>0) {
                     p_end = pointDictionary[n];
                     way_end = L.latLng(p_end.lat, p_end.long);
                     var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow);
                     polyline['_rat_run'] = p.neighbors_rr && p.neighbors_rr.length > 0 && p.neighbors_rr.includes(n);
                     polyline['_reverse'] = false;
                     streets.addLayer(polyline);
-                    counter = counter + 1;
                 }
             }
         }
@@ -100,7 +93,6 @@ function drawStreets(pointDictionary) {
     });
     streets_rr.addTo(map);
     streets.addTo(map);
-    refreshLayers();
 }
 
 fileInput.addEventListener('change', function() {
