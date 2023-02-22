@@ -21,6 +21,7 @@ class Point {
 
 let dict = {};
 let counter = 1;
+let streets = L.featureGroup();
 
 function addMarker(feature) {
     // Check that the feature is a point
@@ -83,14 +84,16 @@ function drawStreets(pointDictionary) {
                     p_end = pointDictionary[n];
                     way_end = L.latLng(p_end.lat, p_end.long);
                     console.log("way #", counter, ": from ", p.id, way_start.toString(), " to ", p_end.id, way_end.toString());
-                    var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow).addTo(map);
+                    var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow);
                     polyline['_reverse'] = false;
+                    streets.addLayer(polyline);
                     counter = counter + 1;
                 }
             }
         }
         //console.log(pointDictionary[key]);
     }
+    streets.addTo(map);
     refreshLayers();
 }
 
