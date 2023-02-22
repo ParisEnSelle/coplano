@@ -103,6 +103,8 @@ fileInput.addEventListener('change', function() {
     //geoJSON.features.forEach(addMarker);
     dict = parsePoints(geoJSON.features);
     drawStreets(dict);
+    bounds = L.geoJSON(geoJSON).getBounds();
+    map.fitBounds(bounds);
   });
 
   reader.readAsText(file);
