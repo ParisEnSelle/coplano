@@ -104,6 +104,25 @@ function markRatRuns(streets, ratRuns) {
     });
 }
 
+function refreshRatRuns(){
+    graph = buildGraph(streets);
+    ratRuns = getRatRuns(graph, transitStreet);
+    console.log(`Found ${ratRuns.length} rat runs!!!`);
+    ratRuns.forEach(r => console.log('- ', r));
+    markRatRuns(streets, ratRuns);
+}
+
+function displayRatRuns() {
+    streets_rr.clearLayers();
+    streets.eachLayer(function(layer) {
+        if (layer['_rat_run']) {
+            streets_rr.addLayer(L.polyline(layer.getLatLngs(), {color: 'red', weight: 10}));
+        }
+    });
+    streets_rr.addTo(map);
+    streets_rr.bringToBack();
+}
+
 function drawStreets(pointDictionary) {
     // add segments for all local streets
     console.log("drawing streets...");
@@ -126,20 +145,10 @@ function drawStreets(pointDictionary) {
             }
         }
     }
-
-    graph = buildGraph(streets);
-    ratRuns = getRatRuns(graph, transitStreet);
-    console.log(`Found ${ratRuns.length} rat runs!!!`);
-    ratRuns.forEach(r => console.log('- ', r));
-    markRatRuns(streets, ratRuns);
-
-    streets.eachLayer(function(layer) {
-        if (layer['_rat_run']) {
-            streets_rr.addLayer(L.polyline(layer.getLatLngs(), {color: 'red', weight: 10}));
-        }
-    });
-    streets_rr.addTo(map);
     streets.addTo(map);
+
+    refreshRatRuns();
+    displayRatRuns();
 }
 
 // Load points in geojson file and markers
@@ -159,6 +168,16 @@ fileInput.addEventListener('change', function() {
   reader.readAsText(file);
 });
 
+const clearButton = document.getElementById("clear-rat-runs");
+clearButton.addEventListener("click", function() {
+    streets_rr.clearLayers();
+});
+
+const displayButton = document.getElementById("display-rat-runs");
+displayButton.addEventListener("click", function() {
+    refreshRatRuns();
+    displayRatRuns();
+});
 
 // Mock dict
 let point1 = new Point(40.748817, -73.985428, 1);
