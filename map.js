@@ -8,9 +8,6 @@ class Point {
   }
 }
 
-// Load points in geojson file and markers
-const fileInput = document.getElementById('fileInput');
-
 const Direction = {
     BASE: 'base',
     REVERSE: 'reverse',
@@ -145,6 +142,8 @@ function drawStreets(pointDictionary) {
     streets.addTo(map);
 }
 
+// Load points in geojson file and markers
+const fileInput = document.getElementById('fileInput');
 fileInput.addEventListener('change', function() {
   const file = fileInput.files[0];
   const reader = new FileReader();
