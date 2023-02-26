@@ -27,7 +27,7 @@ let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
 
 // Create the map
-var map = L.map('map').setView([48.89, 2.345], 15);
+var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
 
 // Add a tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
