@@ -1,14 +1,3 @@
-// Create the map
-var map = L.map('map').setView([48.89, 2.345], 15);
-
-// Add a tile layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-}).addTo(map);
-
-// Load points in geojson file and markers
-const fileInput = document.getElementById('fileInput');
-
 // Build list of points
 class Point {
   constructor(lat, long, id) {
@@ -19,9 +8,34 @@ class Point {
   }
 }
 
+// Load points in geojson file and markers
+const fileInput = document.getElementById('fileInput');
+
+const Direction = {
+    BASE: 'base',
+    REVERSE: 'reverse',
+    DOUBLE: 'double',
+    NONE: 'none'
+};
+
+const arrowSettings = {
+  size: '15px',
+  //frequency: '100px',
+  fill: true,
+  yawn: 30
+};
+
 let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
+
+// Create the map
+var map = L.map('map').setView([48.89, 2.345], 15);
+
+// Add a tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+}).addTo(map);
 
 function addMarker(feature) {
     // Check that the feature is a point
@@ -42,24 +56,17 @@ function parsePoints(points) {
     return pointsDictionary;
 }
 
-var arrowSettings = {
-  size: '15px',
-  //frequency: '100px',
-  fill: true,
-  yawn: 30
-};
-
 function reverseArrow(ev) {
     var polyline = ev.target;
 
     // Change the color of the polyline
     var arrowColor;
-    if (polyline._reverse) {
+    if (polyline._direction === Direction.REVERSE) {
         arrowColor = "blue";
-        polyline._reverse = false;
+        polyline._direction = Direction.BASE;
     } else {
         arrowColor = "red";
-        polyline._reverse = true;
+        polyline._direction = Direction.REVERSE;
     }
 
     polyline.setStyle({color : arrowColor});
@@ -80,7 +87,9 @@ function drawStreets(pointDictionary) {
                     way_end = L.latLng(p_end.lat, p_end.long);
                     var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow);
                     polyline['_rat_run'] = p.neighbors_rr && p.neighbors_rr.length > 0 && p.neighbors_rr.includes(n);
-                    polyline['_reverse'] = false;
+                    polyline['_direction'] = Direction.BASE;
+                    polyline['_point_start'] = key;
+                    polyline['_point_end'] = n;
                     streets.addLayer(polyline);
                 }
             }
