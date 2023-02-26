@@ -154,23 +154,26 @@ console.log(getUniqueElementsTransit(transitStreet));
 console.log(`High street: ${getUniqueElementsTransit(transitStreet).size} nodes, ${transitStreet.length} links`);
 console.log(`Low street: ${getUniqueElements(localStreet).size} nodes, ${localStreet.length} links`);
 
-transitNodesAll = new Set();
-for (let s of transitStreet) {
-    for (let n of getUniqueElements(s)) {
-        transitNodesAll.add(n);
+function getRatRuns(graph, transitStreet) {
+    transitNodesAll = new Set();
+    for (let s of transitStreet) {
+        for (let n of getUniqueElements(s)) {
+            transitNodesAll.add(n);
+        }
     }
-}
-console.log(transitNodesAll);
 
-let ratRuns = [];
-for (let transit of transitStreet) {
-    let startNodes = getUniqueElements(transit);
-    let destinationNodes = new Set([...transitNodesAll].filter(x => !startNodes.has(x)));
-    for (let start of startNodes) {
-        ratRuns = ratRuns.concat(depthFirstSearch(graph, start, destinationNodes));
+    let ratRuns = [];
+    for (let transit of transitStreet) {
+        let startNodes = getUniqueElements(transit);
+        let destinationNodes = new Set([...transitNodesAll].filter(x => !startNodes.has(x)));
+        for (let start of startNodes) {
+            ratRuns = ratRuns.concat(depthFirstSearch(graph, start, destinationNodes));
+        }
     }
+    return ratRuns;
 }
 
+let ratRuns = getRatRuns(graph, transitStreet);
 console.log(`Found ${ratRuns.length} rat runs from ${transitStreet}:`);
 ratRuns.forEach(r => console.log('- ', r));
 console.log();
