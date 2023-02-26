@@ -57,17 +57,44 @@ function reverseArrow(ev) {
     var polyline = ev.target;
 
     // Change the color of the polyline
+    // BASE > REVERSE > DOUBLE > NONE > BASE > ...
     var arrowColor;
-    if (polyline._direction === Direction.REVERSE) {
-        arrowColor = "blue";
-        polyline._direction = Direction.BASE;
-    } else {
-        arrowColor = "green";
+    if (polyline._direction === Direction.BASE) {
+        // From BASE to REVERSE
         polyline._direction = Direction.REVERSE;
-    }
+        arrowColor = "green";
+        polyline.setStyle({color : arrowColor});
+        polyline.setLatLngs(polyline.getLatLngs().reverse()); // also applies the style changes to the arrowhead
 
-    polyline.setStyle({color : arrowColor});
-    polyline.setLatLngs(polyline.getLatLngs().reverse()); // also applies the style changes to the arrowhead
+    } else if (polyline._direction === Direction.REVERSE) {
+        // From REVERSE to DOUBLE
+        polyline._direction = Direction.DOUBLE;
+        arrowColor = (polyline._base === Direction.DOUBLE) ? "blue" : "green";
+        polyline.setStyle({color : arrowColor});
+        polyline.setLatLngs(polyline.getLatLngs().reverse()); // reset
+
+        // Set double-arrow
+        var polyline2 = L.polyline(polyline.getLatLngs(), {color: arrowColor, interactive: false }).arrowheads(arrowSettings);
+        polyline2.setLatLngs(polyline2.getLatLngs().reverse());
+        polyline2.addTo(map);
+        polyline._polyline2 = polyline2;
+
+    } else if (polyline._direction === Direction.DOUBLE) {
+        // From DOUBLE to NONE
+        polyline._direction = Direction.NONE;
+        arrowColor = (polyline._base === Direction.NONE) ? "blue" : "green";
+        polyline.getArrowheads().remove();
+        polyline.setStyle({color : arrowColor, dashArray: '10, 10'});
+        polyline._polyline2.remove();
+
+    } else {
+        // From NONE to BASE
+        polyline._direction = Direction.BASE;
+        arrowColor = (polyline._base === Direction.BASE) ? "blue" : "green";
+        polyline.getArrowheads().addTo(map);
+        polyline.setStyle({color : arrowColor, dashArray: ''});
+        polyline.setLatLngs(polyline.getLatLngs());
+    }
 }
 
 function buildGraph(polylineLayerGroup) {
@@ -138,6 +165,7 @@ function drawStreets(pointDictionary) {
                     var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow);
                     polyline['_rat_run'] = p.neighbors_rr && p.neighbors_rr.length > 0 && p.neighbors_rr.includes(n);
                     polyline['_direction'] = Direction.BASE;
+                    polyline['_base'] = Direction.BASE;
                     polyline['_point_start'] = Number(key);
                     polyline['_point_end'] = Number(n);
                     streets.addLayer(polyline);
