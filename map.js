@@ -62,7 +62,7 @@ function reverseArrow(ev) {
         arrowColor = "blue";
         polyline._direction = Direction.BASE;
     } else {
-        arrowColor = "red";
+        arrowColor = "green";
         polyline._direction = Direction.REVERSE;
     }
 
