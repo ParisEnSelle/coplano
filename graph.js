@@ -162,17 +162,15 @@ for (let s of transitStreet) {
 }
 console.log(transitNodesAll);
 
-// Pick labels
+let ratRuns = [];
 for (let transit of transitStreet) {
     let startNodes = getUniqueElements(transit);
     let destinationNodes = new Set([...transitNodesAll].filter(x => !startNodes.has(x)));
-    console.log(`Start nodes: ${[...startNodes]} (total ${startNodes.size})`);
-    console.log(`Destination nodes: ${[...destinationNodes]} (total ${destinationNodes.size})`);
-
     for (let start of startNodes) {
-        let ratRuns = depthFirstSearch(graph, start, destinationNodes);
-        console.log(`Found ${ratRuns.length} rat runs from ${startNodes}:`);
-        ratRuns.forEach(r => console.log('- ', r));
-        console.log();
+        ratRuns = ratRuns.concat(depthFirstSearch(graph, start, destinationNodes));
     }
 }
+
+console.log(`Found ${ratRuns.length} rat runs from ${transitStreet}:`);
+ratRuns.forEach(r => console.log('- ', r));
+console.log();
