@@ -74,7 +74,7 @@ function reverseArrow(ev) {
 }
 
 function buildGraph(polylineLayerGroup) {
-    let graph = [];
+    let pairs = [];
     polylineLayerGroup.eachLayer(function(polyline){
 
         let direction = polyline['_direction'];
@@ -82,15 +82,15 @@ function buildGraph(polylineLayerGroup) {
         let end = polyline['_point_end'];
 
         if (direction === Direction.BASE) {
-            graph.push([start, end]);
+            pairs.push([start, end]);
         } else if (direction === Direction.REVERSE) {
-            graph.push([end, start]);
+            pairs.push([end, start]);
         } else if (direction === Direction.DOUBLE) {
-            graph.push([start, end]);
-            graph.push([end, start]);
+            pairs.push([start, end]);
+            pairs.push([end, start]);
         }
     });
-    return graph;
+    return buildGraphfromPairs(pairs);
 }
 
 function markRatRuns(streets, ratRuns) {
@@ -122,8 +122,8 @@ function drawStreets(pointDictionary) {
                     var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow);
                     polyline['_rat_run'] = p.neighbors_rr && p.neighbors_rr.length > 0 && p.neighbors_rr.includes(n);
                     polyline['_direction'] = Direction.BASE;
-                    polyline['_point_start'] = key;
-                    polyline['_point_end'] = n;
+                    polyline['_point_start'] = Number(key);
+                    polyline['_point_end'] = Number(n);
                     streets.addLayer(polyline);
                 }
             }
