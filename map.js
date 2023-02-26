@@ -133,7 +133,7 @@ function drawStreets(pointDictionary) {
     graph = buildGraph(streets);
     ratRuns = getRatRuns(graph, transitStreet);
     console.log(`Found ${ratRuns.length} rat runs!!!`);
-    console.log(ratRuns);
+    ratRuns.forEach(r => console.log('- ', r));
     markRatRuns(streets, ratRuns);
 
     streets.eachLayer(function(layer) {
@@ -151,7 +151,6 @@ fileInput.addEventListener('change', function() {
 
   reader.addEventListener('load', function() {
     const geoJSON = JSON.parse(reader.result);
-    //geoJSON.features.forEach(addMarker);
     dict = parsePoints(geoJSON.features);
     drawStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
