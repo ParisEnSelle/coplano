@@ -11,21 +11,6 @@ function printOutput(text) {
   console.log(text);
 }
 
-// Street Plan
-transitStreet = [
-    [[1,1]],
-    [[6,14], [14,7], [7,8], [8,9]],
-    [[3,3]]
-];
-
-transitNodesAll = new Set();
-for (let s of transitStreet) {
-    for (let n of getUniqueElements(s)) {
-        transitNodesAll.add(n);
-    }
-}
-console.log(transitNodesAll);
-
 function getUniqueElements(pairs) {
     let uniqueElements = new Set();
     for (let pair of pairs) {
@@ -45,12 +30,6 @@ function getUniqueElementsTransit(transitStreets) {
     }
     return uniqueElements;
 }
-
-console.log(getUniqueElementsTransit(transitStreet));
-
-
-console.log(`High street: ${getUniqueElementsTransit(transitStreet).size} nodes, ${transitStreet.length} links`);
-console.log(`Low street: ${getUniqueElements(localStreet).size} nodes, ${localStreet.length} links`);
 
 // Prepare
 
@@ -94,7 +73,35 @@ function validateLowStreetNodes(pairs) {
     }
 }
 
+function buildGraph(pairs) {
+    let graph = {};
+    let nodes = getUniqueElements(pairs);
+    for (let node of nodes) {
+        graph[node] = new Set();
+    }
+    for (let pair of pairs) {
+        let n0 = pair[0];
+        let n1 = pair[1];
+        graph[n0].add(n1);
+    }
+    return graph;
+}
 
+function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) {
+    visited.add(start);
+    path = path.concat(start);
+    if (labels.has(start)) {
+        return [path];
+    }
+    let paths = [];
+    for (let node of graph[start]) {
+        if (!visited.has(node)) {
+            let newPaths = depthFirstSearch(graph, node, labels, path, visited);
+            paths = paths.concat(newPaths);
+        }
+    }
+    return paths;
+}
 
 localStreet = [
     [1,3],
@@ -129,43 +136,31 @@ localStreet = [
     [20,13],
 ]
 
-function buildGraph(pairs) {
-    let graph = {};
-    let nodes = getUniqueElements(pairs);
-    for (let node of nodes) {
-        graph[node] = new Set();
-    }
-    for (let pair of pairs) {
-        let n0 = pair[0];
-        let n1 = pair[1];
-        graph[n0].add(n1);
-    }
-    return graph;
-}
+transitStreet = [
+    [[1,1]],
+    [[6,14], [14,7], [7,8], [8,9]],
+    [[3,3]]
+];
+
 
 let graph = buildGraph(localStreet);
 console.log(graph);
 
-
-function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) {
-    visited.add(start);
-    path = path.concat(start);
-    if (labels.has(start)) {
-        return [path];
-    }
-    let paths = [];
-    for (let node of graph[start]) {
-        if (!visited.has(node)) {
-            let newPaths = depthFirstSearch(graph, node, labels, path, visited);
-            paths = paths.concat(newPaths);
-        }
-    }
-    return paths;
-}
-
 let labels = new Set([6,14,7,8,9,2,1]);
 let result = depthFirstSearch(graph, 3, labels);
 console.log(result);
+
+console.log(getUniqueElementsTransit(transitStreet));
+console.log(`High street: ${getUniqueElementsTransit(transitStreet).size} nodes, ${transitStreet.length} links`);
+console.log(`Low street: ${getUniqueElements(localStreet).size} nodes, ${localStreet.length} links`);
+
+transitNodesAll = new Set();
+for (let s of transitStreet) {
+    for (let n of getUniqueElements(s)) {
+        transitNodesAll.add(n);
+    }
+}
+console.log(transitNodesAll);
 
 // Pick labels
 for (let transit of transitStreet) {
