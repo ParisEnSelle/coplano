@@ -73,7 +73,7 @@ function validateLowStreetNodes(pairs) {
     }
 }
 
-function buildGraph(pairs) {
+function buildGraphfromPairs(pairs) {
     let graph = {};
     let nodes = getUniqueElements(pairs);
     for (let node of nodes) {
@@ -143,7 +143,7 @@ transitStreet = [
 ];
 
 
-let graph = buildGraph(localStreet);
+let graph = buildGraphfromPairs(localStreet);
 console.log(graph);
 
 let labels = new Set([6,14,7,8,9,2,1]);

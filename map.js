@@ -73,6 +73,40 @@ function reverseArrow(ev) {
     polyline.setLatLngs(polyline.getLatLngs().reverse()); // also applies the style changes to the arrowhead
 }
 
+function buildGraph(polylineLayerGroup) {
+    let graph = [];
+    polylineLayerGroup.eachLayer(function(polyline){
+
+        let direction = polyline['_direction'];
+        let start = polyline['_point_start'];
+        let end = polyline['_point_end'];
+
+        if (direction === Direction.BASE) {
+            graph.push([start, end]);
+        } else if (direction === Direction.REVERSE) {
+            graph.push([end, start]);
+        } else if (direction === Direction.DOUBLE) {
+            graph.push([start, end]);
+            graph.push([end, start]);
+        }
+    });
+    return graph;
+}
+
+function markRatRuns(streets, ratRuns) {
+    let ratRunPairs = new Set();
+    for (let rr of ratRuns) {
+        for (var i = 0; i < rr.length - 1; i++) {
+            ratRunPairs.add(JSON.stringify([rr[i], rr[i+1]]));
+        }
+    }
+    streets.eachLayer(function(polyline) {
+        let start = polyline['_point_start'];
+        let end = polyline['_point_end'];
+        polyline._rat_run = ratRunPairs.has(JSON.stringify([start,end])) || ratRunPairs.has(JSON.stringify([end,start]));
+    });
+}
+
 function drawStreets(pointDictionary) {
     // add segments for all local streets
     console.log("drawing streets...");
@@ -95,6 +129,13 @@ function drawStreets(pointDictionary) {
             }
         }
     }
+
+    graph = buildGraph(streets);
+    ratRuns = getRatRuns(graph, transitStreet);
+    console.log(`Found ${ratRuns.length} rat runs!!!`);
+    console.log(ratRuns);
+    markRatRuns(streets, ratRuns);
+
     streets.eachLayer(function(layer) {
         if (layer['_rat_run']) {
             streets_rr.addLayer(L.polyline(layer.getLatLngs(), {color: 'red', weight: 10}));
