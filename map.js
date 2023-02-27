@@ -143,7 +143,7 @@ function displayRatRuns() {
     streets_rr.clearLayers();
     streets.eachLayer(function(layer) {
         if (layer['_rat_run']) {
-            streets_rr.addLayer(L.polyline(layer.getLatLngs(), {color: 'red', weight: 10}));
+            streets_rr.addLayer(L.polyline(layer.getLatLngs(), {color: 'red', weight: 10, interactive: false }));
         }
     });
     streets_rr.addTo(map);
