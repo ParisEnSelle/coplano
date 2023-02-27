@@ -94,10 +94,12 @@ function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) 
         return [path];
     }
     let paths = [];
-    for (let node of graph[start]) {
-        if (!visited.has(node)) {
-            let newPaths = depthFirstSearch(graph, node, labels, path, new Set(visited));
-            paths = paths.concat(newPaths);
+    if (graph[start]) {
+        for (let node of graph[start]) {
+            if (!visited.has(node)) {
+                let newPaths = depthFirstSearch(graph, node, labels, path, new Set(visited));
+                paths = paths.concat(newPaths);
+            }
         }
     }
     return paths;
