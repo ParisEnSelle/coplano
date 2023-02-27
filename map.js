@@ -95,6 +95,9 @@ function reverseArrow(ev) {
         polyline.setStyle({color : arrowColor, dashArray: ''});
         polyline.setLatLngs(polyline.getLatLngs());
     }
+
+    refreshRatRuns();
+    displayRatRuns();
 }
 
 function buildGraph(polylineLayerGroup) {
