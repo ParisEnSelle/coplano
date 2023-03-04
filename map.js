@@ -47,10 +47,15 @@ function parsePoints(points) {
     let pointsDictionary = {};
     for (let point of points) {
         let newPoint = new Point(point.geometry.coordinates[1], point.geometry.coordinates[0], point.properties.id);
-        neighborsList = Array.from(point.properties.local_street.split(","), Number);
-        for (let n of neighborsList) {
-            newPoint.neighbors[n] = "";
+        function parseNeighbors(list, direction) {
+            if (list) {
+                neighborsList = Array.from(list.split(","), Number);
+                neighborsList.forEach((n, i, a) => newPoint.neighbors[n] = direction);
+            }
         }
+        parseNeighbors(point.properties.local_street , Direction.BASE);
+        parseNeighbors(point.properties.local_street_double_way , Direction.DOUBLE);
+        parseNeighbors(point.properties.local_street_modal_filter , Direction.NONE);
         pointsDictionary[point.properties.id] = newPoint;
     }
     return pointsDictionary;
@@ -170,8 +175,8 @@ function drawStreets(pointDictionary) {
                     way_end = L.latLng(p_end.lat, p_end.long);
                     var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow);
                     polyline['_rat_run'] = p.neighbors_rr && p.neighbors_rr.length > 0 && p.neighbors_rr.includes(n);
-                    polyline['_direction'] = Direction.BASE;
-                    polyline['_base'] = Direction.BASE;
+                    polyline['_direction'] = p.neighbors[n];
+                    polyline['_base'] = p.neighbors[n];
                     polyline['_point_start'] = Number(key);
                     polyline['_point_end'] = Number(n);
                     streets.addLayer(polyline);
@@ -221,6 +226,5 @@ point2.neighbors[1] = "";
 let a = { 1: point1, 2: point2};
 //console.log(a);
 //drawStreets(a);
-
 
 layers = {};
