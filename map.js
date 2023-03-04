@@ -42,6 +42,19 @@ function addMarker(feature) {
     }
 }
 
+// Verify there is no duplicate  a->b b->a neighbor relationship
+function cleanPoints(points) {
+  for (let id in points) {
+    neighbors = points[id].neighbors;
+    for (let n in neighbors) {
+      if (points[n] && points[n].neighbors && points[n].neighbors[id] && id < n) { // Only display message once
+        console.log(`Error: points ${id} and ${n} are self-referencing each other, please cleanup the geojson.`);
+        throw("Self-reference neighbor error");
+      }
+    }
+  }
+}
+
 function parsePoints(points) {
     //console.log("parsing points:", points.length)
     let pointsDictionary = {};
@@ -199,6 +212,7 @@ fileInput.addEventListener('change', function() {
   reader.addEventListener('load', function() {
     const geoJSON = JSON.parse(reader.result);
     dict = parsePoints(geoJSON.features);
+    cleanPoints(dict);
     drawStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
     map.fitBounds(bounds);
