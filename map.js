@@ -8,6 +8,10 @@ class Point {
   }
 }
 
+const Constant = {
+    MODAL_FILTER_DASH: '10,10'
+}
+
 const Direction = {
     BASE: 'base',
     REVERSE: 'reverse',
@@ -105,7 +109,7 @@ function reverseArrow(ev) {
         polyline._direction = Direction.NONE;
         arrowColor = (polyline._base === Direction.NONE) ? "blue" : "green";
         polyline.getArrowheads().remove();
-        polyline.setStyle({color : arrowColor, dashArray: '10, 10'});
+        polyline.setStyle({color : arrowColor, dashArray: Constant.MODAL_FILTER_DASH });
         polyline._polyline2.remove();
 
     } else {
