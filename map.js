@@ -194,13 +194,24 @@ function drawStreets(pointDictionary) {
                 if (n>0) {
                     p_end = pointDictionary[n];
                     way_end = L.latLng(p_end.lat, p_end.long);
-                    var polyline = L.polyline([way_start, way_end], {color: 'blue'}).arrowheads(arrowSettings).on('click', reverseArrow);
+                    direction = p.neighbors[n];
+                    dashStyle = (direction === Direction.NONE) ? Constant.MODAL_FILTER_DASH : "";
+
+                    var polyline = L.polyline([way_start, way_end], {color: 'blue', dashArray: dashStyle});
                     polyline['_rat_run'] = p.neighbors_rr && p.neighbors_rr.length > 0 && p.neighbors_rr.includes(n);
-                    polyline['_direction'] = p.neighbors[n];
-                    polyline['_base'] = p.neighbors[n];
+                    polyline['_direction'] = direction;
+                    polyline['_base'] = direction;
                     polyline['_point_start'] = Number(key);
                     polyline['_point_end'] = Number(n);
+                    polyline.on('click', reverseArrow);
                     streets.addLayer(polyline);
+
+                    if (direction == Direction.BASE) {
+                        polyline.arrowheads(arrowSettings);
+                    } else if (direction == Direction.DOUBLE) {
+                        polyline.arrowheads(arrowSettings);
+                        addDoubleArrow(polyline, "blue");
+                    }
                 }
             }
         }
