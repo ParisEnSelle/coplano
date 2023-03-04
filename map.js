@@ -4,7 +4,7 @@ class Point {
     this.lat = lat;
     this.long = long;
     this.id = id;
-    this.neighbors = [];
+    this.neighbors = {};
   }
 }
 
@@ -47,7 +47,10 @@ function parsePoints(points) {
     let pointsDictionary = {};
     for (let point of points) {
         let newPoint = new Point(point.geometry.coordinates[1], point.geometry.coordinates[0], point.properties.id);
-        newPoint.neighbors = Array.from(point.properties.local_street.split(","), Number);
+        neighborsList = Array.from(point.properties.local_street.split(","), Number);
+        for (let n of neighborsList) {
+            newPoint.neighbors[n] = "";
+        }
         pointsDictionary[point.properties.id] = newPoint;
     }
     return pointsDictionary;
@@ -160,8 +163,8 @@ function drawStreets(pointDictionary) {
     for (let key in pointDictionary) {
         p = pointDictionary[key];
         way_start = L.latLng(p.lat, p.long);
-        if (p.neighbors.length > 0) {
-            for (let n of p.neighbors) {
+        if (Object.keys(p.neighbors).length > 0) {
+            for (let n in p.neighbors) {
                 if (n>0) {
                     p_end = pointDictionary[n];
                     way_end = L.latLng(p_end.lat, p_end.long);
@@ -212,9 +215,9 @@ displayButton.addEventListener("click", function() {
 
 // Mock dict
 let point1 = new Point(40.748817, -73.985428, 1);
-point1.neighbors.push(2);
+point1.neighbors[2] = "";
 let point2 = new Point(41.748817, -74.985428, 2);
-point2.neighbors.push(1);
+point2.neighbors[1] = "";
 let a = { 1: point1, 2: point2};
 //console.log(a);
 //drawStreets(a);
