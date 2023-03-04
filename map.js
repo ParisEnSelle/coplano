@@ -78,6 +78,13 @@ function parsePoints(points) {
     return pointsDictionary;
 }
 
+function addDoubleArrow(polyline, arrowColor) {
+    var polyline2 = L.polyline(polyline.getLatLngs(), {color: arrowColor, interactive: false }).arrowheads(arrowSettings);
+    polyline2.setLatLngs(polyline2.getLatLngs().reverse());
+    polyline2.addTo(map);
+    polyline._polyline2 = polyline2;
+}
+
 function reverseArrow(ev) {
     var polyline = ev.target;
 
@@ -99,10 +106,7 @@ function reverseArrow(ev) {
         polyline.setLatLngs(polyline.getLatLngs().reverse()); // reset
 
         // Set double-arrow
-        var polyline2 = L.polyline(polyline.getLatLngs(), {color: arrowColor, interactive: false }).arrowheads(arrowSettings);
-        polyline2.setLatLngs(polyline2.getLatLngs().reverse());
-        polyline2.addTo(map);
-        polyline._polyline2 = polyline2;
+        addDoubleArrow(polyline, arrowColor);
 
     } else if (polyline._direction === Direction.DOUBLE) {
         // From DOUBLE to NONE
