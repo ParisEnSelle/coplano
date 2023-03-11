@@ -164,7 +164,7 @@ function markRatRuns(streets, ratRuns) {
 }
 
 function refreshRatRuns(){
-    graph = buildGraph(streets);
+    let graph = buildGraph(streets);
     ratRuns = getRatRuns(graph, transitStreet);
     console.log(`Found ${ratRuns.length} rat runs!!!`);
     ratRuns.forEach(r => console.log('- ', r));
