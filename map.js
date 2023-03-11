@@ -48,14 +48,18 @@ function addMarker(feature) {
 
 // Verify there is no duplicate  a->b b->a neighbor relationship
 function cleanPoints(points) {
+  let flag = false;
   for (let id in points) {
     neighbors = points[id].neighbors;
     for (let n in neighbors) {
       if (points[n] && points[n].neighbors && points[n].neighbors[id] && id < n) { // Only display message once
         console.log(`Error: points ${id} and ${n} are self-referencing each other, please cleanup the geojson.`);
-        throw("Self-reference neighbor error");
+        flag = true;
       }
     }
+  }
+  if (flag) {
+    throw("Self-reference neighbor error");
   }
 }
 
