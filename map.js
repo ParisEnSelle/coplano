@@ -77,6 +77,10 @@ function parsePoints(points) {
         parseNeighbors(point.properties.local_street , Direction.BASE);
         parseNeighbors(point.properties.local_street_double_way , Direction.DOUBLE);
         parseNeighbors(point.properties.local_street_modal_filter , Direction.NONE);
+        newPoint.transit = point.properties.transit_node && point.properties.transit_node == "1";
+        if (point.properties.transit_street) {
+            newPoint.neighbors_transit = Array.from(point.properties.transit_street.split(","), Number);
+        }
         pointsDictionary[point.properties.id] = newPoint;
     }
     return pointsDictionary;
