@@ -29,6 +29,7 @@ const arrowSettings = {
 let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
+let transitStreet = [];
 
 // Create the map
 var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
@@ -137,6 +138,58 @@ function reverseArrow(ev) {
     displayRatRuns();
 }
 
+function getTransitSets(transitGraph) {
+    let assignedTransit = {};
+    let transitStreets = {};
+    let transitCounter = 0;
+
+    for (let key in transitGraph) {
+        for (let n of transitGraph[key]) {
+            let transitId;
+            if (!assignedTransit[key] && !assignedTransit[n]) {
+                transitCounter += 1;
+                transitId = transitCounter;
+                transitStreets[transitId] = [];
+            } else if (assignedTransit[key] && assignedTransit[n]) {
+                transitId = assignedTransit[key];
+                let transitIdOther = assignedTransit[n];
+                if (transitId != transitIdOther) {  // merge two transit sets
+                    let transitStreetOther = transitStreets[transitIdOther];
+                    let transitStreetOtherNodes = getUniqueElements(transitStreetOther);
+                    for (let i of transitStreetOtherNodes) {
+                      assignedTransit[i] = transitId;
+                    }
+                    transitStreets[transitId] = transitStreets[transitId].concat(transitStreetOther);
+                    delete transitStreets.transitIdOther; //remove item from dico
+                }
+            } else if (assignedTransit[n]) {
+                transitId = assignedTransit[n];
+            } else if (assignedTransit[key]) {
+                transitId = assignedTransit[key];
+            }
+            assignedTransit[key] = transitId;
+            assignedTransit[n] = transitId;
+            transitStreets[transitId].push([Number(key), n]);
+        }
+    }
+
+
+    // TODO: verify all nodes marked as transit are part of a transit street
+    return Object.values(transitStreets);
+}
+
+function buildTransitStreets(points) {
+    let transitGraph = {};
+    for (let p in points) {
+        if (points[p].transit) {
+            transitGraph[p] = points[p].neighbors_transit;
+            console.log(`Transit node ${p}: ${points[p].neighbors_transit}`)
+        }
+    }
+
+    return getTransitSets(transitGraph);
+}
+
 function buildGraph(polylineLayerGroup) {
     let pairs = [];
     polylineLayerGroup.eachLayer(function(polyline){
@@ -241,6 +294,7 @@ fileInput.addEventListener('change', function() {
     dict = parsePoints(geoJSON.features);
     cleanPoints(dict);
     drawStreets(dict);
+    transitStreet = buildTransitStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
     map.fitBounds(bounds);
   });
