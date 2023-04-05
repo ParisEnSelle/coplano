@@ -30,6 +30,7 @@ let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
 let transitStreet = [];
+let transitExceptions = {};
 
 // Create the map
 var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
@@ -81,6 +82,9 @@ function parsePoints(points) {
         newPoint.transit = point.properties.transit_node && point.properties.transit_node == "1";
         if (point.properties.transit_street) {
             newPoint.neighbors_transit = Array.from(point.properties.transit_street.split(","), Number);
+            if (point.properties.transit_exceptions) {
+                newPoint.transit_exceptions = Array.from(point.properties.transit_exceptions.split(","), Number);
+            }
         }
         pointsDictionary[point.properties.id] = newPoint;
     }
@@ -190,6 +194,18 @@ function buildTransitStreets(points) {
     return getTransitSets(transitGraph);
 }
 
+function buildTransitExceptions(points) {
+    let transitExceptions = {};
+    for (let p in points) {
+        if (points[p].transit_exceptions) {
+            transitExceptions[p] = points[p].transit_exceptions;
+            console.log(`Transit exception from ${p}: ${points[p].transit_exceptions}`)
+        }
+    }
+
+    return transitExceptions;
+}
+
 function buildGraph(polylineLayerGroup) {
     let pairs = [];
     polylineLayerGroup.eachLayer(function(polyline){
@@ -226,7 +242,7 @@ function markRatRuns(streets, ratRuns) {
 
 function refreshRatRuns(){
     let graph = buildGraph(streets);
-    ratRuns = getRatRuns(graph, transitStreet);
+    let ratRuns = getRatRuns(graph, transitStreet, transitExceptions);
     console.log(`Found ${ratRuns.length} rat runs!!!`);
     ratRuns.forEach(r => console.log('- ', r));
     markRatRuns(streets, ratRuns);
@@ -293,6 +309,7 @@ function processGeojson(geojson) {
     cleanPoints(dict);
     drawStreets(dict);
     transitStreet = buildTransitStreets(dict);
+    transitExceptions = buildTransitExceptions(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
     map.fitBounds(bounds);
 }
