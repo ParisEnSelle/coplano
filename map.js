@@ -283,6 +283,33 @@ function drawStreets(pointDictionary) {
     displayRatRuns();
 }
 
+function processGeojson(geojson) {
+    // Remove previous lines
+    streets.clearLayers();
+    streets_rr.clearLayers();
+
+    const geoJSON = JSON.parse(geojson);
+    dict = parsePoints(geoJSON.features);
+    cleanPoints(dict);
+    drawStreets(dict);
+    transitStreet = buildTransitStreets(dict);
+    bounds = L.geoJSON(geoJSON).getBounds();
+    map.fitBounds(bounds);
+}
+
+
+function loadHostedGeojson(geojsonFilename) {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      processGeojson(xhr.responseText);
+    }
+  };
+  xhr.open("GET", geojsonFilename);
+  xhr.send();
+}
+
+
 // Load points in geojson file and markers
 const fileInput = document.getElementById('fileInput');
 fileInput.addEventListener('change', function() {
@@ -290,13 +317,7 @@ fileInput.addEventListener('change', function() {
   const reader = new FileReader();
 
   reader.addEventListener('load', function() {
-    const geoJSON = JSON.parse(reader.result);
-    dict = parsePoints(geoJSON.features);
-    cleanPoints(dict);
-    drawStreets(dict);
-    transitStreet = buildTransitStreets(dict);
-    bounds = L.geoJSON(geoJSON).getBounds();
-    map.fitBounds(bounds);
+    processGeojson(reader.result);
   });
 
   reader.readAsText(file);
@@ -323,3 +344,5 @@ let a = { 1: point1, 2: point2};
 //drawStreets(a);
 
 layers = {};
+
+loadHostedGeojson("Boinod.geojson");
