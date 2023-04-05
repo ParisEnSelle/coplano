@@ -160,7 +160,7 @@ function getTransitSets(transitGraph) {
                       assignedTransit[i] = transitId;
                     }
                     transitStreets[transitId] = transitStreets[transitId].concat(transitStreetOther);
-                    delete transitStreets.transitIdOther; //remove item from dico
+                    delete transitStreets[transitIdOther]; //remove item from dico
                 }
             } else if (assignedTransit[n]) {
                 transitId = assignedTransit[n];
