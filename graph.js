@@ -73,3 +73,5 @@ function getRatRuns(graph, transitStreet, transitExceptions) {
     }
     return ratRuns;
 }
+
+module.exports = getUniqueElements;
