@@ -40,14 +40,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-function addMarker(feature) {
-    // Check that the feature is a point
-    if (feature.geometry.type === 'Point') {
-        L.marker([feature.geometry.coordinates[1],feature.geometry.coordinates[0]]).addTo(map);
-        console.log();
-    }
-}
-
 // Verify there is no duplicate  a->b b->a neighbor relationship
 function cleanPoints(points) {
   let flag = false;
@@ -350,16 +342,5 @@ displayButton.addEventListener("click", function() {
     refreshRatRuns();
     displayRatRuns();
 });
-
-// Mock dict
-let point1 = new Point(40.748817, -73.985428, 1);
-point1.neighbors[2] = "";
-let point2 = new Point(41.748817, -74.985428, 2);
-point2.neighbors[1] = "";
-let a = { 1: point1, 2: point2};
-//console.log(a);
-//drawStreets(a);
-
-layers = {};
 
 loadHostedGeojson("Boinod.geojson");
