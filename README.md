@@ -75,11 +75,9 @@ On peut affiner cette recherche par deux moyens :
 
 ### Erreurs au chargement
 
-Une relation entre un noeud A et un noeud B ne peut être définie qu'une et une seule fois. Une erreur est générée :
-- Si A référence B et B référence A
-- Si A référence B de plusieurs manières différentes (`local_street` et `local_street_modal_filter` par exemple)
+Une relation entre un noeud A et un noeud B ne peut être définie qu'une et une seule fois. Une erreur est générée si A référence B et B référence A.
 
-En cas d'erreur, une exception s'affiche (dans la console, F12) et le chargement est saboté.
+En cas d'erreur, une exception s'affiche (dans la console, F12) et le chargement est interrompu.
 
 ![exceptions](assets/exceptions.png)
 
