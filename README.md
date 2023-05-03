@@ -19,6 +19,8 @@ Il y a deux phases :
 
 Le fichier geojson décrit les carrefours (noeuds) et les sens de circulation du quartier, simples ou doubles. Le geojson doit contenir un nuage de points et ceux-ci doivent être annotés via les propriétés ci-dessous. Pour le créer, on peut utiliser [cocarto.com](https://cocarto.com/) ou d'autres éditeurs de geojson.
 
+Un exemple est visible ici : https://cocarto.com/fr/share/TGeknxKpH8CPTvu2
+
 ![Site cocarto: configuration du quartier Marx Dormoy à Paris 18](assets/cocarto-marx-dormoy.jpg)
 
 
