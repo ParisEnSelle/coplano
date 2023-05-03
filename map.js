@@ -1,11 +1,11 @@
 // Build list of points
 class Point {
-  constructor(lat, long, id) {
-    this.lat = lat;
-    this.long = long;
-    this.id = id;
-    this.neighbors = {};
-  }
+    constructor(lat, long, id) {
+        this.lat = lat;
+        this.long = long;
+        this.id = id;
+        this.neighbors = {};
+    }
 }
 
 const Constant = {
@@ -20,10 +20,10 @@ const Direction = {
 };
 
 const arrowSettings = {
-  size: '15px',
-  //frequency: '100px',
-  fill: true,
-  yawn: 30
+    size: '15px',
+    //frequency: '100px',
+    fill: true,
+    yawn: 30
 };
 
 const LOG_LEVEL = 1;
@@ -44,23 +44,23 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Verify there is no duplicate  a->b b->a neighbor relationship
 function cleanPoints(points) {
-  let flag = false;
-  let logs = "";
-  for (let id in points) {
-    neighbors = points[id].neighbors;
-    for (let n in neighbors) {
-      if (points[n] && points[n].neighbors && points[n].neighbors[id] && id < n) { // Only display message once
-        output = `Error: points ${id} and ${n} are self-referencing each other.`
-        console.log(output);
-        logs += output + "\n";
-        flag = true;
-      }
+    let flag = false;
+    let logs = "";
+    for (let id in points) {
+        neighbors = points[id].neighbors;
+        for (let n in neighbors) {
+            if (points[n] && points[n].neighbors && points[n].neighbors[id] && id < n) { // Only display message once
+                output = `Error: points ${id} and ${n} are self-referencing each other.`
+                console.log(output);
+                logs += output + "\n";
+                flag = true;
+            }
+        }
     }
-  }
-  if (flag) {
-    alert("Error on importing geojson: several points are self-referencing each other. Please cleanup the geojson and reload the file.\n" + logs);
-    throw("Self-reference neighbor error");
-  }
+    if (flag) {
+        alert("Error on importing geojson: several points are self-referencing each other. Please cleanup the geojson and reload the file.\n" + logs);
+        throw("Self-reference neighbor error");
+    }
 }
 
 function parsePoints(points) {
@@ -322,28 +322,28 @@ function processGeojson(geojson) {
 
 
 function loadHostedGeojson(geojsonFilename) {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      processGeojson(xhr.responseText);
-    }
-  };
-  xhr.open("GET", geojsonFilename);
-  xhr.send();
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            processGeojson(xhr.responseText);
+        }
+    };
+    xhr.open("GET", geojsonFilename);
+    xhr.send();
 }
 
 
 // Load points in geojson file and markers
 const fileInput = document.getElementById('fileInput');
 fileInput.addEventListener('change', function() {
-  const file = fileInput.files[0];
-  const reader = new FileReader();
+    const file = fileInput.files[0];
+    const reader = new FileReader();
 
-  reader.addEventListener('load', function() {
-    processGeojson(reader.result);
-  });
+    reader.addEventListener('load', function() {
+        processGeojson(reader.result);
+    });
 
-  reader.readAsText(file);
+    reader.readAsText(file);
 });
 
 const clearButton = document.getElementById("clear-rat-runs");
