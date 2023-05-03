@@ -43,23 +43,26 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Verify there is no duplicate  a->b b->a neighbor relationship
-function cleanPoints(points) {
-    let flag = false;
+function checkNoSelfReferencingNeighbors(points) {
     let logs = "";
     for (let id in points) {
-        neighbors = points[id].neighbors;
+        let neighbors = points[id].neighbors;
         for (let n in neighbors) {
             if (points[n] && points[n].neighbors && points[n].neighbors[id] && id < n) { // Only display message once
-                output = `Error: points ${id} and ${n} are self-referencing each other.`
+                output = `Error: points ${id} and ${n} are self-referencing each other`
                 console.log(output);
                 logs += output + "\n";
-                flag = true;
             }
         }
     }
-    if (flag) {
-        alert("Error on importing geojson: several points are self-referencing each other. Please cleanup the geojson and reload the file.\n" + logs);
-        throw("Self-reference neighbor error");
+    return logs;
+}
+
+function checkPointErrors(points) {
+    let logs = checkNoSelfReferencingNeighbors(points);
+    if (logs) {
+        alert("Error(s) on importing geojson, see details below. Please cleanup the geojson and reload the file.\n\n" + logs);
+        throw("Geojson point configuration error");
     }
 }
 
@@ -312,7 +315,7 @@ function processGeojson(geojson) {
 
     const geoJSON = JSON.parse(geojson);
     dict = parsePoints(geoJSON.features);
-    cleanPoints(dict);
+    checkPointErrors(dict);
     drawStreets(dict);
     transitStreet = buildTransitStreets(dict);
     transitExceptions = buildTransitExceptions(dict);
