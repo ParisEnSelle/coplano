@@ -41,14 +41,14 @@ Type booléen:
 
 Type texte:
 - `local_street`
-- `transit_street`
 - `local_street_double_way` _(optionnel)_
 - `local_street_modal_filter` _(optionnel)_
 - `transit_exceptions` _(optionnel)_
+- `transit_street` _(optionnel)_
 
 *Notes :*
 - les colonnes de type texte doivent toutes suivre le même format "21,25,26" c'est-à-dire une suite d'entiers séparés par des virgules.
-- contrairement à la capture d'écran, tous les noms de colonnes doivent être définies en minuscule
+- contrairement à la capture d'écran, tous les noms de colonnes doivent être définis en minuscule
 
 
 
@@ -56,22 +56,22 @@ Type texte:
 
 Chaque noeud est identifié au moyen d'un identifiant `id`, un nombre entier qui doit être unique (1, 2, 3, etc). L'`id` servira ensuite à définir les sens de circulation et les axes de transits.
 
-`local_street`, `local_street_double_way` et `local_street_modal_filter` permettent de définir les sens de circulation dans les segments locaux de rue :
-- `local_street` : sens de circulation unique à sens unique
+`local_street`, `local_street_double_way` et `local_street_modal_filter` permettent de définir les sens de circulation dans les segments de rue locaux :
+- `local_street` : segment à sens de circulation unique
 - `local_street_double_way` : à double-sens
 - `local_street_modal_filter` : aucun sens de circulation
 
 `transit_node` est utilisé pour définir un noeud de transit.
 
-`transit_street` et `transit_exceptions` permettent de raffiner les axes de transits et les transits pertinents.
+`transit_exceptions` et `transit_street` permettent de raffiner les axes de transits et les transits pertinents.
 
 ### Comment définir les transits pertinents ?
 
-Si des noeuds de transit sont des noeuds successifs d'un même boulevard, on peut considérer inutile de vouloir montrer un rat run de l'un de ces noeuds à l'autre. On peut alors relier ces noeuds entre eux par `transit_street`. Ces noeuds feront alors partie d'un même "axe de transit", et l'algorithme ne cherchera pas à relier 2 noeuds du même axe de transit.
+Par défaut, l'algorithme cherche **tous les chemins possibles pour relier un noeud de transit à un autre noeud de transit par des segments de rue locaux**.
 
-L'algorithme cherchera par contre à relier des axes de transit différents entre eux, de tel sorte qu'il passe par des noeuds locaux.
-
-On peut également définir des exceptions via `transit_exceptions` (non affiché sur la capture d'écran). Si 1 et 14 sont des noeuds de transit mais qu'on considère que les relier n'est pas pertinent et encombrerait la représentation du plan, on peut ajouter la valeur "14" dans `transit_exceptions` à la ligne où `id` vaut 1. L'algorithme ignorera les rat runs démarrant de 1 et aboutissant à 14.
+On peut affiner cette recherche par deux moyens :
+- `transit_exceptions` : il peut paraître peu pertinent de relier tel noeud de transit à tel noeud de transit. On peut alors définir des exceptions. Si 1 et 14 sont des noeuds de transit mais qu'on considère que les relier n'est pas pertinent et encombrerait la représentation du plan, on peut ajouter la valeur "14" dans _transit_exceptions_ à la ligne où _id_ vaut 1. L'algorithme ignorera les rat runs démarrant de 1 et aboutissant à 14.
+- `transit_street` : si des noeuds de transit sont des noeuds successifs d'un même boulevard, on peut considérer inutile de vouloir montrer un rat run de l'un de ces noeuds à l'autre. On peut alors relier ces noeuds entre eux par _transit_street_. Ces noeuds feront alors partie d'un même "axe de transit" ou _transit set_, et l'algorithme ne cherchera pas à relier 2 noeuds du même axe de transit. L'algorithme cherchera par contre à relier des axes de transit différents entre eux, de tel sorte qu'il passe par des noeuds locaux.
 
 ### Erreurs au chargement
 
