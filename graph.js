@@ -2,7 +2,7 @@
 function displayText(sentence) {
   let p = document.createElement("p");
   p.innerHTML = sentence;
-	let div = document.getElementById("rat-run-output");
+  let div = document.getElementById("rat-run-output");
   div.appendChild(p);
 }
 

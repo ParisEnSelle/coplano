@@ -26,6 +26,8 @@ const arrowSettings = {
   yawn: 30
 };
 
+const LOG_LEVEL = 1;
+
 let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
@@ -179,7 +181,9 @@ function buildTransitStreets(points) {
     for (let p in points) {
         if (points[p].transit) {
             transitGraph[p] = points[p].neighbors_transit;
-            console.log(`Transit node ${p}: ${points[p].neighbors_transit}`)
+            if (LOG_LEVEL >= 2) {
+                console.log(`Transit node ${p}: ${points[p].neighbors_transit}`)
+            }
         }
     }
 
@@ -191,7 +195,9 @@ function buildTransitExceptions(points) {
     for (let p in points) {
         if (points[p].transit_exceptions) {
             transitExceptions[p] = points[p].transit_exceptions;
-            console.log(`Transit exception from ${p}: ${points[p].transit_exceptions}`)
+            if (LOG_LEVEL >= 2) {
+                console.log(`Transit exception from ${p}: ${points[p].transit_exceptions}`)
+            }
         }
     }
 
@@ -235,8 +241,10 @@ function markRatRuns(streets, ratRuns) {
 function refreshRatRuns(){
     let graph = buildGraph(streets);
     let ratRuns = getRatRuns(graph, transitStreet, transitExceptions);
-    console.log(`Found ${ratRuns.length} rat runs!!!`);
-    ratRuns.forEach(r => console.log('- ', r));
+    if (ratRuns.length > 0 && LOG_LEVEL >= 1) {
+        console.log(`Found ${ratRuns.length} rat runs`);
+        ratRuns.forEach(r => console.log('- ', r));
+    }
     markRatRuns(streets, ratRuns);
 }
 
@@ -253,8 +261,10 @@ function displayRatRuns() {
 
 function drawStreets(pointDictionary) {
     // add segments for all local streets
-    console.log("drawing streets...");
-    console.log("found dict with nb points:", Object.keys(pointDictionary).length);
+    if (LOG_LEVEL >= 2) {
+        console.log("drawing streets...");
+        console.log("found dict with nb points:", Object.keys(pointDictionary).length);
+    }
     for (let key in pointDictionary) {
         p = pointDictionary[key];
         way_start = L.latLng(p.lat, p.long);
