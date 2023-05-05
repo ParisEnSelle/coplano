@@ -360,4 +360,4 @@ displayButton.addEventListener("click", function() {
     displayRatRuns();
 });
 
-loadHostedGeojson("Boinod.geojson");
+loadHostedGeojson("geojson/Boinod.geojson");
