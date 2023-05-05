@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-pandanic-theme@1.0.0/dist/leaflet-pandanic-theme.min.css"> -->
+    <title>Street Plan</title>
   </head>
   <body>
-      <div id="map" style="height: 600px; width: 1000px;"></div>
-      <input type="file" id="fileInput">
+      <h1>Street Plan</h1>
       <div>
-        <p>Option sur les rat runs:</p>
-        <button id="display-rat-runs">Afficher</button>
-        <button id="clear-rat-runs">Effacer</button>
+        <p>
+          Paris
+        </p>
+        <ul>
+          <li><a href="/plan/paris/75018-boinod.html">18eme - Boinod</a></li>
+          <li><a href="/plan/paris/75018-marxdormoy.html">18eme - Marx Dormoy</a></li>
+          <li><a href="/plan/paris/75018-montmartre.html">18eme - Montmartre</a></li>
+        </ul>
       </div>
-      <div id="rat-run-output"></div>
-      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-      <script src="leaflet.geometryutil.js"></script>
-      <script src="leaflet-arrowheads.js"></script>
-      <script src="graph.js"></script>
-      <script src="map.js"></script>
   </body>
 </html>

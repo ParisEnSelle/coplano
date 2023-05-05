@@ -359,5 +359,3 @@ displayButton.addEventListener("click", function() {
     refreshRatRuns();
     displayRatRuns();
 });
-
-loadHostedGeojson("geojson/Boinod.geojson");
