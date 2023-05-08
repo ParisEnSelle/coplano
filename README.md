@@ -1,6 +1,6 @@
-# street-plan
+# Coplano
 
-street-plan est une ébauche d'assistant de plan de circulation. En cliquant sur les flèches, on fait apparaitre (ou disparaitre) des rat runs. Cela marche uniquement sur desktop. L'idée est de facilement dessiner les plans de circulation, de visualiser les rat runs, et peut-être à terme de générer semi-automatiquement une partie des plans.
+Coplano est une ébauche d'assistant de plan de circulation. En cliquant sur les flèches, on fait apparaitre (ou disparaitre) des rat runs. Cela marche uniquement sur desktop. L'idée est de facilement dessiner les plans de circulation, de visualiser les rat runs, et peut-être à terme de générer semi-automatiquement une partie des plans.
 
 Voilà un exemple de plan de circu pour le quartier Boinod/Simplon dans le 18ème arrondissement de Paris :
 - ![bleu](assets/blue.jpg) Axes actuels
@@ -9,11 +9,11 @@ Voilà un exemple de plan de circu pour le quartier Boinod/Simplon dans le 18èm
 
 ![Quartier Boinod : les flèches vertes représentent les axes modifiés, les bleus les axes actuels. Il n'y a plus de rat runs](assets/Boinod_500px.png)
 
-## Comment utiliser street-plan ?
+## Comment utiliser Coplano ?
 
 Il y a deux phases :
 1. **Une étape de préparation :** configuration d'un geojson pour décrire un quartier sur [cocarto.com](cocarto.com)
-2. **Une étape d'analyse :** charger le geojson dans street-plan et analyser les plans de circulation possibles
+2. **Une étape d'analyse :** charger le geojson dans Coplano et analyser les plans de circulation possibles
 
 ## Phase de préparation : comment configurer un geojson pour son quartier ?
 
@@ -30,7 +30,7 @@ Un exemple est visible ici : https://cocarto.com/fr/share/TGeknxKpH8CPTvu2
 2. Ajouter les 7 colonnes listées ci-dessous
 3. Créer chacun des points ou "noeuds" (5-10 min)
 4. Remplir les 7 colonnes (30-45 min)
-5. Exporter le fichier geojson et l'importer dans street-plan
+5. Exporter le fichier geojson et l'importer dans Coplano
 
 
 ### Configuration : colonnes à ajouter
