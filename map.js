@@ -83,9 +83,9 @@ function parsePoints(points) {
         newPoint.transit = point.properties.transit_node && point.properties.transit_node == "1";
         if (point.properties.transit_street) {
             newPoint.neighbors_transit = Array.from(point.properties.transit_street.split(","), Number);
-            if (point.properties.transit_exceptions) {
-                newPoint.transit_exceptions = Array.from(point.properties.transit_exceptions.split(","), Number);
-            }
+        }
+        if (point.properties.transit_exceptions) {
+            newPoint.transit_exceptions = Array.from(point.properties.transit_exceptions.split(","), Number);
         }
         pointsDictionary[point.properties.id] = newPoint;
     }
@@ -149,6 +149,10 @@ function getTransitSets(transitGraph) {
     let transitCounter = 0;
 
     for (let key in transitGraph) {
+        // account for cases where no transit neighbors was defined for a transit node
+        if (transitGraph[key] === undefined) {
+            transitGraph[key] = [Number(key)];
+        }
         for (let n of transitGraph[key]) {
             let transitId;
             if (!assignedTransit[key] && !assignedTransit[n]) {
@@ -316,9 +320,9 @@ function processGeojson(geojson) {
     const geoJSON = JSON.parse(geojson);
     dict = parsePoints(geoJSON.features);
     checkPointErrors(dict);
-    drawStreets(dict);
     transitStreet = buildTransitStreets(dict);
     transitExceptions = buildTransitExceptions(dict);
+    drawStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
     map.fitBounds(bounds);
 }
