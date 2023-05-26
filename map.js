@@ -31,7 +31,7 @@ const LOG_LEVEL = 1;
 let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
-let transitStreet = [];
+let transitSets = [];
 let transitExceptions = {};
 
 // Create the map
@@ -183,6 +183,9 @@ function getTransitSets(transitGraph) {
     }
 
 
+    for (let key in transitStreets) {
+        transitStreets[key] =  getUniqueElements(transitStreets[key]);
+    }
     // TODO: verify all nodes marked as transit are part of a transit street
     return Object.values(transitStreets);
 }
@@ -251,7 +254,7 @@ function markRatRuns(streets, ratRuns) {
 
 function refreshRatRuns(){
     let graph = buildGraph(streets);
-    let ratRuns = getRatRuns(graph, transitStreet, transitExceptions);
+    let ratRuns = getRatRuns(graph, transitSets, transitExceptions);
     if (ratRuns.length > 0 && LOG_LEVEL >= 1) {
         console.log(`Found ${ratRuns.length} rat runs`);
         ratRuns.forEach(r => console.log('- ', r));
@@ -320,7 +323,7 @@ function processGeojson(geojson) {
     const geoJSON = JSON.parse(geojson);
     dict = parsePoints(geoJSON.features);
     checkPointErrors(dict);
-    transitStreet = buildTransitStreets(dict);
+    transitSets = buildTransitStreets(dict);
     transitExceptions = buildTransitExceptions(dict);
     drawStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
