@@ -255,9 +255,13 @@ function markRatRuns(streets, ratRuns) {
 function refreshRatRuns(){
     let graph = buildGraph(streets);
     let ratRuns = getRatRuns(graph, transitSets, transitExceptions);
-    if (ratRuns.length > 0 && LOG_LEVEL >= 1) {
-        console.log(`Found ${ratRuns.length} rat runs`);
-        ratRuns.forEach(r => console.log('- ', r));
+    if (ratRuns.length > 0) {
+        if (LOG_LEVEL >= 1) {
+            console.log(`Found ${ratRuns.length} rat runs`);
+        }
+        if (LOG_LEVEL >= 2) {
+            ratRuns.forEach(r => console.log('- ', r));
+        }
     }
     markRatRuns(streets, ratRuns);
 }
