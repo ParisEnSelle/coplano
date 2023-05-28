@@ -52,7 +52,7 @@ function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) 
     return paths;
 }
 
-function getRatRuns(graph, transitSets, transitExceptions) {
+function getRatRuns(graph, transitSets, transitBlacklists) {
     transitNodesAll = new Set();
     for (let s of transitSets) {
         for (let n of s) {
@@ -62,12 +62,12 @@ function getRatRuns(graph, transitSets, transitExceptions) {
 
     let ratRuns = [];
     for (let transit of transitSets) {
-        for (let start of transit) {
+        for (let startNode of transit) {
             let destinationNodes = new Set([...transitNodesAll].filter(x => !transit.has(x)));
-            if (transitExceptions && transitExceptions[start]) {
-                destinationNodes = new Set([...destinationNodes].filter(x => !transitExceptions[start].includes(x)));
+            if (transitBlacklists && transitBlacklists[startNode]) {
+                destinationNodes = new Set([...destinationNodes].filter(x => !transitBlacklists[startNode].includes(x)));
             }
-            ratRuns = ratRuns.concat(depthFirstSearch(graph, start, destinationNodes));
+            ratRuns = ratRuns.concat(depthFirstSearch(graph, startNode, destinationNodes));
         }
     }
     return ratRuns;

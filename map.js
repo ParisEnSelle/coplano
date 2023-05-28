@@ -32,7 +32,7 @@ let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
 let transitSets = [];
-let transitExceptions = {};
+let transitBlacklists = {};
 
 // Create the map
 var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
@@ -84,8 +84,13 @@ function parsePoints(points) {
         if (point.properties.transit_street) {
             newPoint.neighbors_transit = Array.from(point.properties.transit_street.split(","), Number);
         }
+        // Keep retro-compatibility with transit exceptions
+        // 'transit exceptions' have been replaced with 'transit blacklist'
         if (point.properties.transit_exceptions) {
-            newPoint.transit_exceptions = Array.from(point.properties.transit_exceptions.split(","), Number);
+            newPoint.transit_blacklist = Array.from(point.properties.transit_exceptions.split(","), Number);
+        }
+        if (point.properties.transit_blacklist) {
+            newPoint.transit_blacklist = Array.from(point.properties.transit_blacklist.split(","), Number);
         }
         pointsDictionary[point.properties.id] = newPoint;
     }
@@ -204,18 +209,18 @@ function buildTransitStreets(points) {
     return getTransitSets(transitGraph);
 }
 
-function buildTransitExceptions(points) {
-    let transitExceptions = {};
+function buildTransitBlacklists(points) {
+    let transitBlacklists = {};
     for (let p in points) {
-        if (points[p].transit_exceptions) {
-            transitExceptions[p] = points[p].transit_exceptions;
+        if (points[p].transit_blacklist) {
+            transitBlacklists[p] = points[p].transit_blacklist;
             if (LOG_LEVEL >= 2) {
-                console.log(`Transit exception from ${p}: ${points[p].transit_exceptions}`)
+                console.log(`Transit blacklist from ${p}: ${points[p].transit_blacklist}`)
             }
         }
     }
 
-    return transitExceptions;
+    return transitBlacklists;
 }
 
 function buildGraph(polylineLayerGroup) {
@@ -254,7 +259,7 @@ function markRatRuns(streets, ratRuns) {
 
 function refreshRatRuns(){
     let graph = buildGraph(streets);
-    let ratRuns = getRatRuns(graph, transitSets, transitExceptions);
+    let ratRuns = getRatRuns(graph, transitSets, transitBlacklists);
     if (ratRuns.length > 0) {
         if (LOG_LEVEL >= 1) {
             console.log(`Found ${ratRuns.length} rat runs`);
@@ -328,7 +333,7 @@ function processGeojson(geojson) {
     dict = parsePoints(geoJSON.features);
     checkPointErrors(dict);
     transitSets = buildTransitStreets(dict);
-    transitExceptions = buildTransitExceptions(dict);
+    transitBlacklists = buildTransitBlacklists(dict);
     drawStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
     map.fitBounds(bounds);
