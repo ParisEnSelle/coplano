@@ -33,6 +33,7 @@ let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
 let transitSets = [];
 let transitBlacklists = {};
+let transitWhitelists = {};
 
 // Create the map
 var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
@@ -91,6 +92,9 @@ function parsePoints(points) {
         }
         if (point.properties.transit_blacklist) {
             newPoint.transit_blacklist = Array.from(point.properties.transit_blacklist.split(","), Number);
+        }
+        if (point.properties.transit_whitelist) {
+            newPoint.transit_whitelist = Array.from(point.properties.transit_whitelist.split(","), Number);
         }
         pointsDictionary[point.properties.id] = newPoint;
     }
@@ -223,6 +227,20 @@ function buildTransitBlacklists(points) {
     return transitBlacklists;
 }
 
+function buildTransitWhitelists(points) {
+    let transitWhitelists = {};
+    for (let p in points) {
+        if (points[p].transit_whitelist) {
+            transitWhitelists[p] = points[p].transit_whitelist;
+            if (LOG_LEVEL >= 2) {
+                console.log(`Transit whitelist from ${p}: ${points[p].transit_whitelist}`)
+            }
+        }
+    }
+
+    return transitWhitelists;
+}
+
 function buildGraph(polylineLayerGroup) {
     let pairs = [];
     polylineLayerGroup.eachLayer(function(polyline){
@@ -259,7 +277,7 @@ function markRatRuns(streets, ratRuns) {
 
 function refreshRatRuns(){
     let graph = buildGraph(streets);
-    let ratRuns = getRatRuns(graph, transitSets, transitBlacklists);
+    let ratRuns = getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists);
     if (ratRuns.length > 0) {
         if (LOG_LEVEL >= 1) {
             console.log(`Found ${ratRuns.length} rat runs`);
@@ -334,6 +352,7 @@ function processGeojson(geojson) {
     checkPointErrors(dict);
     transitSets = buildTransitStreets(dict);
     transitBlacklists = buildTransitBlacklists(dict);
+    transitWhitelists = buildTransitWhitelists(dict);
     drawStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
     map.fitBounds(bounds);
