@@ -85,4 +85,8 @@ function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
     return ratRuns;
 }
 
-module.exports = getUniqueElements;
+module.exports = {
+    depthFirstSearch,
+    getRatRuns,
+    getUniqueElements
+};

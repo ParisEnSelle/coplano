@@ -1,4 +1,4 @@
-const getUniqueElements = require('./graph');
+const { depthFirstSearch, getRatRuns, getUniqueElements } = require('./graph');
 
 describe('getUniqueElements tests', () => {
     test('should return an empty set for empty input', () => {
