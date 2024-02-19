@@ -92,3 +92,25 @@ En cliquant sur un segment, la _flèche_ itère entre ces états :
 - aucun sens de circulation
 
 L'état initial défini dans le geojson est en ![bleu](assets/blue.jpg), les autres états en ![vert](assets/green.jpg). En ![rouge](assets/red.jpg) s'affichent les rat runs.
+
+# Comment contribuer au projet ?
+
+## Ajouter un plan ou une version d'un plan
+
+A venir
+
+## Contribuer au code
+
+Il y a beaucoup à faire et les contributions sont bienvenues. Pour lancer le code en local, on peut par exemple utiliser la commande ci-dessous puis aller sur http://localhost:8000/ :
+
+`python -m http.server`
+
+Pour faire tourner les tests, on lance :
+
+`npm test`
+
+Cela donnera un résultat tel que ci-dessous :
+
+![test_results](assets/test_results.jpg)
+
+A noter qu'il est nécessaire d'installer Node JS pour lancer les tests. Voir https://nodejs.org/.
