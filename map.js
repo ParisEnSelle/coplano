@@ -34,6 +34,7 @@ let streets_rr = L.featureGroup();
 let transitSets = [];
 let transitBlacklists = {};
 let transitWhitelists = {};
+let processRatRuns = true;
 
 // Create the map
 var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
@@ -97,6 +98,11 @@ function parsePoints(points) {
             newPoint.transit_whitelist = Array.from(point.properties.transit_whitelist.split(","), Number);
         }
         pointsDictionary[point.properties.id] = newPoint;
+
+        if (point.properties.ignore_rat_runs) {
+            console.log("Skipping rat runs");
+            processRatRuns = false;
+        }
     }
     return pointsDictionary;
 }
@@ -276,6 +282,9 @@ function markRatRuns(streets, ratRuns) {
 }
 
 function refreshRatRuns(){
+    if (!processRatRuns) {
+        return;
+    }
     let graph = buildGraph(streets);
     let ratRuns = getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists);
     if (ratRuns.length > 0) {
