@@ -299,6 +299,9 @@ function refreshRatRuns(){
 }
 
 function displayRatRuns() {
+    if (!processRatRuns) {
+        return;
+    }
     streets_rr.clearLayers();
     streets.eachLayer(function(layer) {
         if (layer['_rat_run']) {
@@ -395,11 +398,13 @@ fileInput.addEventListener('change', function() {
 
 const clearButton = document.getElementById("clear-rat-runs");
 clearButton.addEventListener("click", function() {
+    processRatRuns = false;
     streets_rr.clearLayers();
 });
 
 const displayButton = document.getElementById("display-rat-runs");
 displayButton.addEventListener("click", function() {
+    processRatRuns = true;
     refreshRatRuns();
     displayRatRuns();
 });
