@@ -68,6 +68,20 @@ function checkPointErrors(points) {
     }
 }
 
+function describePoints(points) {
+    if (LOG_LEVEL >= 1) {
+        let nodes = 0;
+        let segments = 0;
+        for (let id in points) {
+            nodes += 1;
+            for (let n in points[id].neighbors) {
+                segments += 1;
+            }
+        }
+        console.log(`Initialization: loaded ${nodes} nodes with ${segments} segments.`)
+    }
+}
+
 function parsePoints(points) {
     //console.log("parsing points:", points.length)
     let pointsDictionary = {};
@@ -362,6 +376,7 @@ function processGeojson(geojson) {
     const geoJSON = JSON.parse(geojson);
     dict = parsePoints(geoJSON.features);
     checkPointErrors(dict);
+    describePoints(dict);
     transitSets = buildTransitStreets(dict);
     transitBlacklists = buildTransitBlacklists(dict);
     transitWhitelists = buildTransitWhitelists(dict);
