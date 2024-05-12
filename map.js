@@ -26,7 +26,7 @@ const arrowSettings = {
     yawn: 30
 };
 
-const LOG_LEVEL = 1;
+let LOG_LEVEL = 0;
 
 let dict = {};
 let streets = L.featureGroup();
@@ -71,17 +71,17 @@ function checkPointErrors(points) {
 }
 
 function describePoints(points) {
-    if (LOG_LEVEL >= 1) {
-        let nodes = 0;
-        let segments = 0;
-        for (let id in points) {
-            nodes += 1;
-            for (let n in points[id].neighbors) {
-                segments += 1;
-            }
+    let nodes = 0;
+    let segments = 0;
+    for (let id in points) {
+        nodes += 1;
+        for (let n in points[id].neighbors) {
+            segments += 1;
         }
-        nb_nodes = nodes;
-        nb_segments = segments;
+    }
+    nb_nodes = nodes;
+    nb_segments = segments;
+    if (LOG_LEVEL >= 1) {
         console.log(`Initialization: loaded ${nodes} nodes with ${segments} segments.`)
     }
 }
