@@ -61,6 +61,12 @@ function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) 
     visited.add(start);
     path = path.concat(start);
     if (labels.has(start)) {
+        // all edges from the path should be marked as rat runs
+        // also stop any other recursive call from processing this node again
+        // (assume all child paths will be called by a prior DFS call)
+        for (let node of path) {
+            labels.add(node);
+        }
         return [path];
     }
     let paths = [];
