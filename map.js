@@ -35,6 +35,8 @@ let transitSets = [];
 let transitBlacklists = {};
 let transitWhitelists = {};
 let processRatRuns = true;
+let nb_nodes = 0;
+let nb_segments = 0;
 
 // Create the map
 var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
@@ -78,6 +80,8 @@ function describePoints(points) {
                 segments += 1;
             }
         }
+        nb_nodes = nodes;
+        nb_segments = segments;
         console.log(`Initialization: loaded ${nodes} nodes with ${segments} segments.`)
     }
 }
@@ -284,10 +288,21 @@ function buildGraph(polylineLayerGroup) {
 function markRatRuns(streets, ratRuns) {
     let ratRunPairs = new Set();
     for (let rr of ratRuns) {
-        for (var i = 0; i < rr.length - 1; i++) {
-            ratRunPairs.add(JSON.stringify([rr[i], rr[i+1]]));
+        if (rr[1] < rr[0]) {
+            ratRunPairs.add(JSON.stringify([rr[1], rr[0]]));
+        } else {
+            ratRunPairs.add(JSON.stringify([rr[0], rr[1]]));
         }
     }
+    if (ratRunPairs.size > 0) {
+        if (LOG_LEVEL >= 1) {
+            console.log(`Found ${ratRunPairs.size}/${nb_segments} rat runs segments`);
+        }
+        if (LOG_LEVEL >= 4) {
+            ratRuns.forEach(r => console.log('- ', r));
+        }
+    }
+
     streets.eachLayer(function(polyline) {
         let start = polyline['_point_start'];
         let end = polyline['_point_end'];
@@ -301,14 +316,6 @@ function refreshRatRuns(){
     }
     let graph = buildGraph(streets);
     let ratRuns = getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists);
-    if (ratRuns.length > 0) {
-        if (LOG_LEVEL >= 1) {
-            console.log(`Found ${ratRuns.length} rat runs`);
-        }
-        if (LOG_LEVEL >= 2) {
-            ratRuns.forEach(r => console.log('- ', r));
-        }
-    }
     markRatRuns(streets, ratRuns);
 }
 
