@@ -34,6 +34,23 @@ function buildGraphfromPairs(pairs) {
     return graph;
 }
 
+function getRatRunSegments(graph, start, ends) {
+    let segments = new Set();
+    let paths = depthFirstSearch(graph, start, ends);
+    // build pairs from path fragments
+    for (let p of paths) {
+        for (var i = 0; i < p.length - 1; i++) {
+            segments.add(JSON.stringify([p[i], p[i+1]]));
+        }
+    }
+
+    let result = [];
+    for (let s of segments) {
+        result.push(JSON.parse(s));
+    }
+    return result;
+}
+
 function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) {
     visited.add(start);
     path = path.concat(start);
@@ -77,7 +94,7 @@ function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
             }
 
             if (destinationNodes.size > 0) {
-                let newRatRuns = depthFirstSearch(graph, startNode, destinationNodes);
+                let newRatRuns = getRatRunSegments(graph, startNode, destinationNodes);
                 ratRuns = ratRuns.concat(newRatRuns);
             }
         }
@@ -88,5 +105,6 @@ function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
 module.exports = {
     depthFirstSearch,
     getRatRuns,
+    getRatRunSegments,
     getUniqueElements
 };

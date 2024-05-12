@@ -1,4 +1,4 @@
-const { depthFirstSearch, getRatRuns, getUniqueElements } = require('./graph');
+const { depthFirstSearch, getRatRuns, getRatRunSegments, getUniqueElements } = require('./graph');
 
 describe('getUniqueElements tests', () => {
     test('should return an empty set for empty input', () => {
@@ -104,6 +104,180 @@ describe('getRatRuns tests', () => {
             4: []
         };
         const transitSets = [new Set([1]), new Set([4])];
-        expect(getRatRuns(graph, transitSets)).toEqual([[1, 2, 4], [1, 3, 4]]);
+        const expected = [[1, 3], [3, 4], [1, 2], [2, 4]];
+        expect(getRatRuns(graph, transitSets)).toEqual(expected);
     });
+});
+
+
+
+describe('getRatRunSegments tests', () => {
+    test('simple case', () => {
+        const graph = {
+            1: [2],
+            2: [3]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('simple case', () => {
+        const graph = {
+            1: [2]
+        };
+        const ends = new Set([2]);
+        const expected = new Set([[1, 2]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('basic case, dangling start', () => {
+        const graph = {
+            1: [2, 4],
+            2: [3]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('basic case, dangling end', () => {
+        const graph = {
+            1: [2],
+            2: [3, 4]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('basic case, multiple ends', () => {
+        const graph = {
+            1: [2],
+            2: [3, 4]
+        };
+        const ends = new Set([3, 4]);
+        const expected = new Set([[1, 2], [2, 3], [2, 4]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('basic case', () => {
+        const graph = {
+            1: [2],
+            2: [3],
+            4: [2]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('double path', () => {
+        const graph = {
+            1: [2, 4],
+            2: [3],
+            4: [3]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3], [1,4], [4, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('single path with reverse', () => {
+        const graph = {
+            1: [2],
+            2: [3],
+            3: [4],
+            4: [1]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('do not continue search after hitting a label', () => {
+        const graph = {
+            1: [2],
+            2: [3],
+            3: [4],
+            4: [5]
+        };
+        const ends = new Set([3, 5]);
+        const expected = new Set([[1, 2], [2, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('do not include loops', () => {
+        const graph = {
+            1: [2],
+            2: [3,4],
+            4: [5],
+            5: [2]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('complex case with loops', () => {
+        const graph = {
+            1: [4,2],
+            2: [3,4],
+            4: [5],
+            5: [2]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3], [1,4], [4, 5], [5, 2]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('complex case with loops bis', () => {
+        const graph = {
+            1: [2,4],
+            2: [3,4],
+            4: [5],
+            5: [2]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3], [1,4], [4, 5], [5, 2]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('complex case with loop full', () => {
+        const graph = {
+            1: [4,2],
+            2: [3,4],
+            4: [2,3]
+        };
+        const ends = new Set([3]);
+        const expected = new Set([[1, 2], [2, 3], [1, 4], [4, 3], [2, 4], [4, 2]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('complex case', () => {
+        const graph = {
+            1: [4],
+            2: [4],
+            3: [4],
+            4: [7,8]
+        };
+        const ends = new Set([7]);
+        const expected = new Set([[1, 4], [4, 7]]);
+        expect(new Set(getRatRunSegments(graph, 1, ends))).toEqual(expected);
+    });
+
+    test('complex case', () => {
+        const graph = {
+            1: [4],
+            2: [4],
+            3: [4,5,9],
+            4: [6,7,8],
+            9: [8]
+        };
+        const ends = new Set([7, 8]);
+        const expected = new Set([[3, 4], [4, 7], [4,8], [3,9], [9,8]]);
+        expect(new Set(getRatRunSegments(graph, 3, ends))).toEqual(expected);
+    });
+
+
 });
