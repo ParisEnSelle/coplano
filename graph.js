@@ -1,3 +1,5 @@
+let graphCountTotal = 0;
+
 // Utility functions
 function displayText(sentence) {
     let p = document.createElement("p");
@@ -52,6 +54,10 @@ function getRatRunSegments(graph, start, ends) {
 }
 
 function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) {
+    graphCountTotal += 1;
+    if (graphCountTotal % (1000 * 1000) === 0) {
+        console.log(`${graphCountTotal} nodes`);
+    }
     visited.add(start);
     path = path.concat(start);
     if (labels.has(start)) {
@@ -78,6 +84,7 @@ function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
     }
 
     let ratRuns = [];
+    let time_start = performance.now();
     for (let transit of transitSets) {
         for (let startNode of transit) {
             let destinationNodes = new Set([...transitNodesAll].filter(x => !transit.has(x)));
@@ -99,6 +106,10 @@ function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
             }
         }
     }
+    let time_end = performance.now();
+    if (LOG_LEVEL >= 1) { console.log(`${graphCountTotal} nodes in total in ${Math.round(time_end - time_start)} ms`); }
+
+    graphCountTotal = 0;
     return ratRuns;
 }
 
