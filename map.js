@@ -31,9 +31,7 @@ let LOG_LEVEL = 0;
 let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
-let transitSets = [];
-let transitBlacklists = {};
-let transitWhitelists = {};
+let startEnds;
 let processRatRuns = true;
 let nb_nodes = 0;
 let nb_segments = 0;
@@ -329,7 +327,7 @@ function refreshRatRuns(){
         return;
     }
     let graph = buildGraph(streets);
-    let ratRuns = getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists);
+    let ratRuns = getRatRuns(graph, startEnds);
     markRatRuns(streets, ratRuns);
 }
 
@@ -398,9 +396,10 @@ function processGeojson(geojson) {
     dict = parsePoints(geoJSON.features);
     checkPointErrors(dict);
     describePoints(dict);
-    transitSets = buildTransitStreets(dict);
-    transitBlacklists = buildTransitBlacklists(dict);
-    transitWhitelists = buildTransitWhitelists(dict);
+    let transitSets = buildTransitStreets(dict);
+    let transitBlacklists = buildTransitBlacklists(dict);
+    let transitWhitelists = buildTransitWhitelists(dict);
+    startEnds = getStartEnds(transitSets, transitBlacklists, transitWhitelists);
     drawStreets(dict);
     bounds = L.geoJSON(geoJSON).getBounds();
     map.fitBounds(bounds);

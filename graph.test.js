@@ -1,4 +1,4 @@
-const { depthFirstSearch, getRatRuns, getRatRunSegments, getUniqueElements } = require('./graph');
+const { depthFirstSearch, getRatRuns, getRatRunSegments, getUniqueElements, groupKeysBySet, getStartEnds } = require('./graph');
 
 describe('getUniqueElements tests', () => {
     test('should return an empty set for empty input', () => {
@@ -34,7 +34,78 @@ describe('getUniqueElements tests', () => {
     });
 });
 
+describe('groupKeysBySet tests', () => {
+   test('should return grouped keys', () => {
+       const dictionary = {
+            1: new Set([1, 2, 3]),
+            2: new Set([4, 5]),
+            3: new Set([1, 3, 2]),
+            4: new Set([6, 7, 8]),
+            5: new Set([5, 4]),
+            6: new Set([1, 2, 3]),
+        };
+        const expected = [
+            [[1,3,6], [1,2,3]],
+            [[2,5], [4,5]],
+            [[4], [6,7,8]],
+        ];
+        expect(groupKeysBySet(dictionary)).toEqual(expected);
+   });
+});
 
+describe('getStartEnds tests', () => {
+    test('simple case with 2 nodes', () => {
+        const transitSets = [new Set([19]), new Set([93])];
+        const transitBlacklists = {};
+        const transitWhitelists = {};
+        const expected = [[[19], [93]], [[93],[19]]];
+        expect(getStartEnds(transitSets, transitBlacklists, transitWhitelists)).toEqual(expected);
+    });
+
+    test('simple case with 3 nodes', () => {
+        const transitSets = [new Set([1,2]), new Set([3])];
+        const transitBlacklists = {};
+        const transitWhitelists = {};
+        const expected = [[[1,2], [3]], [[3],[1,2]]];
+        expect(getStartEnds(transitSets, transitBlacklists, transitWhitelists)).toEqual(expected);
+    });
+
+    test('simple case with 3 transit sets', () => {
+        const transitSets = [new Set([1,2]), new Set([3]), new Set([4])];
+        const transitBlacklists = {};
+        const transitWhitelists = {};
+        const expected = [
+            [[1,2], [3,4]],
+            [[3],[1,2,4]],
+            [[4],[1,2,3]]
+        ];
+        expect(getStartEnds(transitSets, transitBlacklists, transitWhitelists)).toEqual(expected);
+    });
+
+    test('simple case with whitelist', () => {
+        const transitSets = [new Set([1,2]), new Set([3, 4])];
+        const transitBlacklists = {};
+        const transitWhitelists = { 1: [4]};
+        const expected = [[[1], [4]], [[2],[3,4]], [[3,4],[1,2]]];
+        expect(getStartEnds(transitSets, transitBlacklists, transitWhitelists)).toEqual(expected);
+    });
+
+    test('simple case with blacklist', () => {
+        const transitSets = [new Set([1,2]), new Set([3, 4])];
+        const transitBlacklists = {};
+        const transitWhitelists = { 1: [4]};
+        const expected = [[[1], [4]], [[2],[3,4]], [[3,4],[1,2]]];
+        expect(getStartEnds(transitSets, transitBlacklists, transitWhitelists)).toEqual(expected);
+    });
+
+   test('simple case with whitelists', () => {
+        const transitSets = [new Set([19]), new Set([93])];
+        const transitBlacklists = {};
+        const transitWhitelists = { 19: [93], 93: [19] };
+        const expected = [[[19], [93]], [[93],[19]]];
+        expect(getStartEnds(transitSets, transitBlacklists, transitWhitelists)).toEqual(expected);
+   });
+});
 
 describe('depthFirstSearch tests', () => {
     test('Empty Graph', () => {
@@ -96,16 +167,18 @@ describe('depthFirstSearch tests', () => {
 });
 
 describe('getRatRuns tests', () => {
-    test('Transit Sets Only', () => {
+    test('simple case', () => {
         const graph = {
             1: [2, 3],
             2: [4],
             3: [4],
             4: []
         };
-        const transitSets = [new Set([1]), new Set([4])];
-        const expected = [[1, 3], [3, 4], [1, 2], [2, 4]];
-        expect(getRatRuns(graph, transitSets)).toEqual(expected);
+        const startEnds = [
+            [[1], [4]]
+        ];
+        const expected = [[1, 2], [2, 4], [1, 3], [3, 4]];
+        expect(getRatRuns(graph, startEnds)).toEqual(expected);
     });
 });
 

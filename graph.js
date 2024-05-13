@@ -1,4 +1,7 @@
 let graphCountTotal = 0;
+if (typeof LOG_LEVEL === 'undefined') {
+    LOG_LEVEL = 1;
+}
 
 // Utility functions
 function displayText(sentence) {
@@ -81,7 +84,37 @@ function depthFirstSearch(graph, start, labels, path = [], visited = new Set()) 
     return paths;
 }
 
-function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
+function groupKeysBySet(dictionary) {
+    const grouped = {};
+
+    // Iterate over the dictionary
+    for (const key in dictionary) {
+        if (dictionary.hasOwnProperty(key)) {
+            const set = Array.from(dictionary[key]);
+            // Convert sorted keys to string for using as object key
+            const sortedKeys = set.sort();
+            const setKey = JSON.stringify(sortedKeys);
+
+            if (!(setKey in grouped)) {
+                grouped[setKey] = { keys: [], set };
+            }
+
+            grouped[setKey].keys.push(parseInt(key));
+        }
+    }
+
+    // Convert grouped object to array of pairs
+    const result = [];
+    for (const key in grouped) {
+        if (grouped.hasOwnProperty(key)) {
+            result.push([grouped[key].keys, grouped[key].set]);
+        }
+    }
+
+    return result;
+}
+
+function getStartEnds(transitSets, transitBlacklists, transitWhitelists) {
     transitNodesAll = new Set();
     for (let s of transitSets) {
         for (let n of s) {
@@ -89,8 +122,9 @@ function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
         }
     }
 
-    let ratRuns = [];
-    let time_start = performance.now();
+    let startEnds = {};
+
+    // all transit nodes should belong to a transit set (by definition)
     for (let transit of transitSets) {
         for (let startNode of transit) {
             let destinationNodes = new Set([...transitNodesAll].filter(x => !transit.has(x)));
@@ -107,9 +141,26 @@ function getRatRuns(graph, transitSets, transitBlacklists, transitWhitelists) {
             }
 
             if (destinationNodes.size > 0) {
-                let newRatRuns = getRatRunSegments(graph, startNode, destinationNodes);
-                ratRuns = ratRuns.concat(newRatRuns);
+                startEnds[startNode] = destinationNodes;
             }
+        }
+    }
+
+    // merge them and return the result
+    let res = groupKeysBySet(startEnds);
+    return res;
+}
+
+function getRatRuns(graph, startEnds) {
+    let ratRuns = [];
+    let time_start = performance.now();
+    for (let pair of startEnds) {
+        let startNodes = pair[0];
+        let destinationNodes = new Set(pair[1]);
+        // TODO: run the algo on all start nodes simultaneously
+        for (let startNode of startNodes) {
+            let newRatRuns = getRatRunSegments(graph, startNode, destinationNodes);
+            ratRuns = ratRuns.concat(newRatRuns);
         }
     }
     let time_end = performance.now();
@@ -123,5 +174,7 @@ module.exports = {
     depthFirstSearch,
     getRatRuns,
     getRatRunSegments,
-    getUniqueElements
+    getUniqueElements,
+    groupKeysBySet,
+    getStartEnds,
 };
