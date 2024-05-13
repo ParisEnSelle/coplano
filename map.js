@@ -3,7 +3,7 @@ class Point {
     constructor(lat, long, id) {
         this.lat = lat;
         this.long = long;
-        this.id = id;
+        this.id = parseInt(id); // for retro-compatibility, should remove it
         this.neighbors = {};
     }
 }
@@ -62,8 +62,22 @@ function checkNoSelfReferencingNeighbors(points) {
     return logs;
 }
 
+function checkIdValid(points) {
+    let logs = "";
+    for (let p in points) {
+        let id = points[p].id;
+        if (!Number.isInteger(id) || id < 0) { // 0 is special value authorized
+            let output = `Error: a point has an invalid id ${id}`
+            console.log(output);
+            logs += output + "\n";
+        }
+    }
+    return logs;
+}
+
 function checkPointErrors(points) {
     let logs = checkNoSelfReferencingNeighbors(points);
+    logs += checkIdValid(points);
     if (logs) {
         alert("Error(s) on importing geojson, see details below. Please cleanup the geojson and reload the file.\n\n" + logs);
         throw("Geojson point configuration error");
