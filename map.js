@@ -127,11 +127,6 @@ function parsePoints(points) {
             newPoint.transit_whitelist = Array.from(point.properties.transit_whitelist.split(","), Number);
         }
         pointsDictionary[point.properties.id] = newPoint;
-
-        if (point.properties.ignore_rat_runs) {
-            console.log("Skipping rat runs");
-            processRatRuns = false;
-        }
     }
     return pointsDictionary;
 }
@@ -414,7 +409,19 @@ function getPlanObjects(geojson) {
     let transitWhitelists = buildTransitWhitelists(dict);
     startEnds = getStartEnds(transitSets, transitBlacklists, transitWhitelists);
     let graph = buildGraphfromPoints(dict);
-    return { points: dict, graph, startEnds };
+    let processRatRuns = checkRatRunSettings(dict);
+    return { points: dict, graph, startEnds, processRatRuns };
+}
+
+function checkRatRunSettings(points) {
+    let processRatRuns = true;
+    for (let point of points) {
+        if (point.properties.ignore_rat_runs) {
+            console.log("Skipping rat runs");
+            processRatRuns = false;
+        }
+    }
+    return processRatRuns;
 }
 
 function processGeojson(geojson) {
@@ -429,6 +436,7 @@ function processGeojson(geojson) {
     let plan = getPlanObjects(geoJSON);
     startEnds = plan.startEnds;
     drawStreets(plan.points);
+    processRatRuns = plan.processRatRuns;
 
     refreshRatRuns();
     displayRatRuns();
