@@ -277,6 +277,27 @@ function buildTransitWhitelists(points) {
     return transitWhitelists;
 }
 
+function buildGraphfromPoints(points) {
+    let pairs = [];
+    for (let start in points) {
+        start = parseInt(start);
+        let p = points[start];
+        for (let end in p.neighbors) {
+            end = parseInt(end);
+            let direction = p.neighbors[end];
+            if (direction === Direction.BASE) {
+                pairs.push([start, end]);
+            } else if (direction === Direction.REVERSE) {
+                pairs.push([end, start]);
+            } else if (direction === Direction.DOUBLE) {
+                pairs.push([start, end]);
+                pairs.push([end, start]);
+            }
+        }
+    }
+    return buildGraphfromPairs(pairs);
+}
+
 function buildGraph(polylineLayerGroup) {
     let pairs = [];
     polylineLayerGroup.eachLayer(function(polyline){
@@ -327,6 +348,7 @@ function refreshRatRuns(){
         return;
     }
     let graph = buildGraph(streets);
+    //TODO: let graph = buildGraphFromPoints(buildPointGraph(streets));
     let ratRuns = getRatRuns(graph, startEnds);
     markRatRuns(streets, ratRuns);
 }
@@ -382,29 +404,36 @@ function drawStreets(pointDictionary) {
         }
     }
     streets.addTo(map);
-
-    refreshRatRuns();
-    displayRatRuns();
 }
 
-function processGeojson(geojson) {
-    // Remove previous lines
-    streets.clearLayers();
-    streets_rr.clearLayers();
-
-    const geoJSON = JSON.parse(geojson);
-    dict = parsePoints(geoJSON.features);
+function getPlanObjects(geojson) {
+    dict = parsePoints(geojson.features);
     checkPointErrors(dict);
     describePoints(dict);
     let transitSets = buildTransitStreets(dict);
     let transitBlacklists = buildTransitBlacklists(dict);
     let transitWhitelists = buildTransitWhitelists(dict);
     startEnds = getStartEnds(transitSets, transitBlacklists, transitWhitelists);
-    drawStreets(dict);
-    bounds = L.geoJSON(geoJSON).getBounds();
-    map.fitBounds(bounds);
+    let graph = buildGraphfromPoints(dict);
+    return { points: dict, graph, startEnds };
 }
 
+function processGeojson(geojson) {
+    const geoJSON = JSON.parse(geojson);
+
+    // Remove previous lines
+    streets.clearLayers();
+    streets_rr.clearLayers();
+    bounds = L.geoJSON(geoJSON).getBounds();
+    map.fitBounds(bounds);
+
+    let plan = getPlanObjects(geoJSON);
+    startEnds = plan.startEnds;
+    drawStreets(plan.points);
+
+    refreshRatRuns();
+    displayRatRuns();
+}
 
 function loadHostedGeojson(geojsonFilename) {
     var xhr = new XMLHttpRequest();
