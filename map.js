@@ -28,7 +28,6 @@ const arrowSettings = {
 
 let LOG_LEVEL = 0;
 
-let dict = {};
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
 let startEnds;
@@ -407,7 +406,7 @@ function drawStreets(pointDictionary) {
 }
 
 function getPlanObjects(geojson) {
-    dict = parsePoints(geojson.features);
+    let dict = parsePoints(geojson.features);
     checkPointErrors(dict);
     describePoints(dict);
     let transitSets = buildTransitStreets(dict);
