@@ -231,6 +231,40 @@ function buildTransitWhitelists(points) {
     return transitWhitelists;
 }
 
+
+// Initialization function to determine the 'local' or 'interior' nodes from
+// the graph. These nodes will then be checked for dead-ends.
+function getLocalNodes(graph) {
+    let nodesWithEntry = new Set();
+    let nodesWithExit = new Set();
+    let nodesNeighbors = {};
+    for (let start in graph) {
+        start = parseInt(start);
+        for (let end of graph[start]) {
+            nodesWithEntry.add(end);
+            nodesWithExit.add(start);
+            if (!(start in nodesNeighbors)) {
+                nodesNeighbors[start] = new Set();
+            }
+            if (!(end in nodesNeighbors)) {
+                nodesNeighbors[end] = new Set();
+            }
+            nodesNeighbors[start].add(end);
+            nodesNeighbors[end].add(start);
+        }
+    }
+
+    let localNodes = new Set();
+    for (let node in graph) {
+        node = parseInt(node);
+        if (nodesWithEntry.has(node) && nodesWithExit.has(node) && nodesNeighbors[node].size > 1) {
+            localNodes.add(node);
+        }
+    }
+    if (LOG_LEVEL >= 2) { console.log(`local nodes: ${[...localNodes]}`); }
+    return localNodes;
+}
+
 function checkRatRunSettings(points) {
     let processRatRuns = true;
     for (let point of points) {
@@ -252,8 +286,9 @@ function getPlanObjects(geojson) {
     let transitWhitelists = buildTransitWhitelists(dict);
     startEnds = getStartEnds(transitSets, transitBlacklists, transitWhitelists);
     let graph = buildGraphfromPoints(dict);
+    let localNodes = getLocalNodes(graph);
     let processRatRuns = checkRatRunSettings(geojson.features);
-    return { points: dict, graph, startEnds, processRatRuns };
+    return { points: dict, graph, startEnds, localNodes, processRatRuns };
 }
 
 //
@@ -429,6 +464,7 @@ function getRatRuns(graph, startEnds) {
 
 module.exports = {
     depthFirstSearch,
+    getLocalNodes,
     getRatRuns,
     getRatRunSegments,
     getUniqueElements,

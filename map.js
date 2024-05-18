@@ -1,5 +1,6 @@
 const Constant = {
-    MODAL_FILTER_DASH: '10,10'
+    MODAL_FILTER_DASH: '10,10',
+    DEAD_END_DISPLAY_DELAY: 3000,
 }
 
 const arrowSettings = {
@@ -14,6 +15,8 @@ let LOG_LEVEL = 0;
 let streets = L.featureGroup();
 let streets_rr = L.featureGroup();
 let processRatRuns = true;
+let timerDeadEnds;
+let localNodes;
 
 // Create the map
 var map = L.map('map', { doubleClickZoom: false }).setView([48.89, 2.345], 15); // disable double-click zoom to avoid confusion when clicking arrows
@@ -71,6 +74,9 @@ function reverseArrow(ev) {
         polyline.setLatLngs(polyline.getLatLngs());
     }
 
+    refreshDeadEnds(true);
+    refreshDeadEndsDelayed(false);
+
     refreshRatRuns();
     displayRatRuns();
 }
@@ -119,6 +125,59 @@ function markRatRuns(streets, ratRuns) {
         polyline._rat_run = ratRunPairs.has(JSON.stringify([start,end])) || ratRunPairs.has(JSON.stringify([end,start]));
     });
 }
+
+// Ensure can enter and exit into each local street node
+// Flag items where we can't
+function flagDeadEnds(graph, localNodes) {
+    let nodesWithEntry = new Set();
+    let nodesWithExit = new Set();
+    for (let start in graph) {
+        for (let end of graph[start]) {
+            nodesWithEntry.add(end);
+            nodesWithExit.add(parseInt(start));
+        }
+    }
+
+    let deadNodes = new Set();
+    for (let node of localNodes) {
+        if (!nodesWithEntry.has(node) || !nodesWithExit.has(node)) {
+            deadNodes.add(node);
+        }
+    }
+
+    return deadNodes;
+}
+
+// A dead-end warning is displayed in case the user has swapped arrows in a way
+// that doesn't leave any entry or exit on a local, interior node.
+// A bit of extra logic is added so that, when the user fixes this error,
+// the warning is removed immediately, but when the user creates such an error,
+// a delay of a few seconds is added (and reset upon each click), before
+// checking again and finally inserting the warning, if there is a dead-end.
+function refreshDeadEnds(removeOnly){
+    let graph = buildGraph(streets);
+    let deadNodes = flagDeadEnds(graph, localNodes);
+
+    let textDeadNodes = '';
+    if (deadNodes.size == 1) {
+        textDeadNodes = `Attention: le noeud ${[...deadNodes]} n'a plus d'entrée/sortie`
+    } else if (deadNodes.size > 1) {
+        textDeadNodes = `Attention: les noeuds ${[...deadNodes]} n'ont plus d'entrée/sortie`
+    }
+
+    if (textDeadNodes.length == 0 || !removeOnly) {
+        const deadText = document.getElementById('dead-ends');
+        deadText.textContent = textDeadNodes;
+    }
+}
+
+function refreshDeadEndsDelayed(removeOnly) {
+    clearInterval(timerDeadEnds);
+    timerDeadEnds = setInterval(() => {
+        clearInterval(timerDeadEnds);
+        refreshDeadEnds(removeOnly);
+    }, Constant.DEAD_END_DISPLAY_DELAY);
+};
 
 function refreshRatRuns(){
     if (!processRatRuns) {
@@ -197,6 +256,7 @@ function processGeojson(geojson) {
     drawStreets(plan.points);
     processRatRuns = plan.processRatRuns;
     checkbox.checked = processRatRuns;
+    localNodes = plan.localNodes;
 
     refreshRatRuns();
     displayRatRuns();

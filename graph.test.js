@@ -1,4 +1,4 @@
-const { depthFirstSearch, getRatRuns, getRatRunSegments, getUniqueElements, groupKeysBySet, getStartEnds } = require('./graph');
+const { depthFirstSearch, getLocalNodes, getRatRuns, getRatRunSegments, getUniqueElements, groupKeysBySet, getStartEnds } = require('./graph');
 
 describe('getUniqueElements tests', () => {
     test('should return an empty set for empty input', () => {
@@ -51,6 +51,51 @@ describe('groupKeysBySet tests', () => {
         ];
         expect(groupKeysBySet(dictionary)).toEqual(expected);
    });
+});
+
+describe('getLocalNodes tests', () => {
+    test('simple case', () => {
+        const graph = {
+            1: [2],
+            2: [3]
+        };
+        const expected = new Set([2]);
+        expect(getLocalNodes(graph)).toEqual(expected);
+    });
+
+    test('case with loop', () => {
+        const graph = {
+            1: [2],
+            2: [3,4],
+            4: [5],
+            5: [2]
+        };
+        const expected = new Set([2,4,5]);
+        expect(getLocalNodes(graph)).toEqual(expected);
+    });
+
+    test('case with double ways', () => {
+        const graph = {
+            1: [2],
+            2: [3,4,5],
+            3: [2,4],
+            5: [2]
+        };
+        const expected = new Set([2,3]);
+        expect(getLocalNodes(graph)).toEqual(expected);
+    });
+
+    test('complex case', () => {
+        const graph = {
+            1: [4],
+            2: [4],
+            3: [4,5,9],
+            4: [6,7,8],
+            9: [8]
+        };
+        const expected = new Set([4,9]);
+        expect(getLocalNodes(graph)).toEqual(expected);
+    });
 });
 
 describe('getStartEnds tests', () => {
