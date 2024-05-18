@@ -196,6 +196,7 @@ function processGeojson(geojson) {
     startEnds = plan.startEnds;
     drawStreets(plan.points);
     processRatRuns = plan.processRatRuns;
+    checkbox.checked = processRatRuns;
 
     refreshRatRuns();
     displayRatRuns();
@@ -226,15 +227,15 @@ fileInput.addEventListener('change', function() {
     reader.readAsText(file);
 });
 
-const clearButton = document.getElementById("clear-rat-runs");
-clearButton.addEventListener("click", function() {
-    processRatRuns = false;
-    streets_rr.clearLayers();
-});
-
-const displayButton = document.getElementById("display-rat-runs");
-displayButton.addEventListener("click", function() {
-    processRatRuns = true;
-    refreshRatRuns();
-    displayRatRuns();
+const checkbox = document.getElementById('show-rat-runs');
+checkbox.checked = false;
+checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+        processRatRuns = true;
+        refreshRatRuns();
+        displayRatRuns();
+    } else {
+        processRatRuns = false;
+        streets_rr.clearLayers();
+    }
 });
