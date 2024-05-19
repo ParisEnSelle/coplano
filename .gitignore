@@ -131,6 +131,12 @@ dmypy.json
 # Custom
 *.geojson
 *.bck
+*.jpg
+*.csv
+*.json
+*.ipynb
+*.py
+*.txt
 
 # Modules
 node_modules/
