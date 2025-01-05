@@ -287,6 +287,12 @@ fileInput.addEventListener('change', function() {
     reader.readAsText(file);
 });
 
+// Load geojson from url
+const loadUrlInput = document.getElementById('loadFileFromUrl');
+loadUrlInput.addEventListener('click', function() {
+  loadHostedGeojson(document.getElementById('urlToLoadFrom').value);
+});
+
 const checkbox = document.getElementById('show-rat-runs');
 checkbox.checked = false;
 checkbox.addEventListener('change', () => {

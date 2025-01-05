@@ -8,7 +8,14 @@
   </head>
   <body>
       <div id="map" style="height: 900px; width: 100%;"></div>
-      <input type="file" id="fileInput">
+      <div>
+        Charger un fichier depuis le disque : <input type="file" id="fileInput">
+      </div>
+
+      <div>
+        <span>Ou charger un fichier depuis une url : </span><input type="url" id="urlToLoadFrom" placeholder="https://example.com/fichier.json"/>
+        <input type="button" value="Charger le fichier depuis l'url" id="loadFileFromUrl" />
+      </div>
       <div>
         <input type="checkbox" id="show-rat-runs">
         <label> Afficher les rat runs</label><br>
