@@ -293,9 +293,13 @@ fileInput.addEventListener('change', function() {
 
 // Load geojson from url
 const loadUrlInput = document.getElementById('loadFileFromUrl');
-loadUrlInput.addEventListener('click', function() {
-  loadHostedGeojson(document.getElementById('urlToLoadFrom').value);
-});
+
+// On the hardcoded plans, that field does not exist, so we have to check for its existence
+if (loadUrlInput) {
+    loadUrlInput.addEventListener('click', function() {
+        loadHostedGeojson(document.getElementById('urlToLoadFrom').value);
+    });
+}
 
 const checkbox = document.getElementById('show-rat-runs');
 checkbox.checked = false;
