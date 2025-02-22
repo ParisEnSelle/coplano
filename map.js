@@ -263,6 +263,7 @@ function processGeojson(geojson) {
 }
 
 function loadHostedGeojson(geojsonFilename) {
+    updateLocationWithGeojsonPath(geojsonFilename);
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
@@ -275,6 +276,23 @@ function loadHostedGeojson(geojsonFilename) {
     };
     xhr.open("GET", geojsonFilename);
     xhr.send();
+}
+
+const geojsonParamKey = "geojson";
+
+function updateLocationWithGeojsonPath(geojsonPath) {
+    var url = new URL(window.location.href);
+    url.searchParams.set(geojsonParamKey, encodeURI(geojsonPath));
+    window.history.replaceState(null, null, url);
+}
+
+function getGeojsonPathFromUrl() {
+    const params = new URL(window.location.href).searchParams;
+    if (params.has(geojsonParamKey)) {
+        return decodeURI(params.get(geojsonParamKey));
+    } else {
+        return null;
+    }
 }
 
 
@@ -296,9 +314,16 @@ const loadUrlInput = document.getElementById('loadFileFromUrl');
 
 // On the hardcoded plans, that field does not exist, so we have to check for its existence
 if (loadUrlInput) {
+    const loadUrlField = document.getElementById('urlToLoadFrom');
     loadUrlInput.addEventListener('click', function() {
-        loadHostedGeojson(document.getElementById('urlToLoadFrom').value);
+        loadHostedGeojson(loadUrlField.value);
     });
+
+    geojsonPathFromUrl = getGeojsonPathFromUrl();
+    if (geojsonPathFromUrl) {
+        loadUrlField.value = geojsonPathFromUrl;
+        loadHostedGeojson(geojsonPathFromUrl);
+    }
 }
 
 const checkbox = document.getElementById('show-rat-runs');
