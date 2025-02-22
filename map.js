@@ -321,8 +321,11 @@ if (loadUrlInput) {
 
     geojsonPathFromUrl = getGeojsonPathFromUrl();
     if (geojsonPathFromUrl) {
+        console.log("going to load geojson from " + geojsonPathFromUrl);
         loadUrlField.value = geojsonPathFromUrl;
         loadHostedGeojson(geojsonPathFromUrl);
+    } else {
+        console.log("no geojson url found");
     }
 }
 
