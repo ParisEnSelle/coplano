@@ -265,8 +265,12 @@ function processGeojson(geojson) {
 function loadHostedGeojson(geojsonFilename) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            processGeojson(xhr.responseText);
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                processGeojson(xhr.responseText);
+            } else {
+                alert("impossible de charger le fichier " + geojsonFilename + ". Ca peut être dû notamment à une erreur dans le chemin du fichier, à une mauvaise connection, ou à une configuration CORS invalide du serveur distant");
+            }
         }
     };
     xhr.open("GET", geojsonFilename);
