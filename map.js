@@ -311,22 +311,18 @@ fileInput.addEventListener('change', function() {
 
 // Load geojson from url
 const loadUrlInput = document.getElementById('loadFileFromUrl');
+const loadUrlField = document.getElementById('urlToLoadFrom');
+loadUrlInput.addEventListener('click', function() {
+    loadHostedGeojson(loadUrlField.value);
+});
 
-// On the hardcoded plans, that field does not exist, so we have to check for its existence
-if (loadUrlInput) {
-    const loadUrlField = document.getElementById('urlToLoadFrom');
-    loadUrlInput.addEventListener('click', function() {
-        loadHostedGeojson(loadUrlField.value);
-    });
-
-    geojsonPathFromUrl = getGeojsonPathFromUrl();
-    if (geojsonPathFromUrl) {
-        console.log("going to load geojson from " + geojsonPathFromUrl);
-        loadUrlField.value = geojsonPathFromUrl;
-        loadHostedGeojson(geojsonPathFromUrl);
-    } else {
-        console.log("no geojson url found");
-    }
+geojsonPathFromUrl = getGeojsonPathFromUrl();
+if (geojsonPathFromUrl) {
+    console.log("going to load geojson from " + geojsonPathFromUrl);
+    loadUrlField.value = geojsonPathFromUrl;
+    loadHostedGeojson(geojsonPathFromUrl);
+} else {
+    console.log("no geojson url found");
 }
 
 const checkbox = document.getElementById('show-rat-runs');
