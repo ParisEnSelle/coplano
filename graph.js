@@ -46,6 +46,44 @@ function checkNoSelfReferencingNeighbors(points) {
     return logs;
 }
 
+// Verify all referenced points exist
+function checkReferencedPointsExist(points) {
+    let logs = "";
+
+    for (let id in points) {
+        // Check regular neighbors (in object format)
+        let neighbors = points[id].neighbors;
+        for (let n in neighbors) {
+            if (!points[n]) {
+                let output = `Error: point ${id} references non-existent neighbor ${n}`;
+                console.log(output);
+                logs += output + "\n";
+            }
+        }
+
+        // Check array-based references (transit neighbors, blacklists, whitelists)
+        const arrayChecks = [
+            { array: points[id].neighbors_transit, type: "transit neighbor" },
+            { array: points[id].transit_blacklist, type: "transit blacklist" },
+            { array: points[id].transit_whitelist, type: "transit whitelist" }
+        ];
+
+        for (const check of arrayChecks) {
+            if (check.array) {
+                for (let n of check.array) {
+                    if (!points[n] && n !== 0) { // 0 is a special case that should be allowed
+                        let output = `Error: point ${id} references non-existent ${check.type} ${n}`;
+                        console.log(output);
+                        logs += output + "\n";
+                    }
+                }
+            }
+        }
+    }
+
+    return logs;
+}
+
 function checkIdValid(points) {
     let logs = "";
     for (let p in points) {
@@ -62,6 +100,7 @@ function checkIdValid(points) {
 function checkPointErrors(points) {
     let logs = checkNoSelfReferencingNeighbors(points);
     logs += checkIdValid(points);
+    logs += checkReferencedPointsExist(points);
     if (logs) {
         alert("Error(s) on importing geojson, see details below. Please cleanup the geojson and reload the file.\n\n" + logs);
         throw("Geojson point configuration error");
