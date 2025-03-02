@@ -11,13 +11,14 @@ Voilà un exemple de plan de circu pour le quartier Boinod/Simplon dans le 18èm
 
 ## Comment utiliser Coplano ?
 
-Il y a deux phases :
-1. **Une étape de préparation :** configuration d'un geojson pour décrire un quartier sur [cocarto.com](cocarto.com)
-2. **Une étape d'analyse :** charger le geojson dans Coplano et analyser les plans de circulation possibles
+Il y a trois phases :
+1. **Une phase d'initialisation :** création d'un geojson pour décrire un quartier sur [cocarto.com](cocarto.com)
+2. **Une phase de configuration :** correction de noeuds et définition des transits
+3. **Une phase d'analyse :** ouvrir le plan dans Coplano et analyser les plans de circulation possibles
 
-## Phase de préparation : comment configurer un geojson pour son quartier ?
+## Phase I - Initialisation
 
-Le fichier geojson décrit les carrefours (noeuds) et les sens de circulation du quartier, simples ou doubles. Le geojson doit contenir un nuage de points et ceux-ci doivent être annotés via les propriétés ci-dessous. Pour le créer, on peut utiliser [cocarto.com](https://cocarto.com/) ou d'autres éditeurs de geojson.
+Le fichier geojson décrit les carrefours (noeuds) et les sens de circulation du quartier, simples ou doubles. Le geojson doit contenir un nuage de points et ceux-ci doivent être annotés via les propriétés ci-dessous. Pour le créer, on recommande d'utiliser [cocarto.com](https://cocarto.com/).
 
 Un exemple est visible ici : https://cocarto.com/fr/share/TGeknxKpH8CPTvu2
 
@@ -55,6 +56,7 @@ Type texte:
 - contrairement à la capture d'écran, tous les noms de colonnes doivent être définis en minuscule
 
 
+## Phase II - Configuration des noeuds
 
 ### Annotation des colonnes
 
@@ -86,7 +88,7 @@ En cas d'erreur, une exception s'affiche (dans la console, F12) et le chargement
 
 ![exceptions](assets/exceptions.png)
 
-## Phase d'analyse
+## Phase III - Analyse
 
 En cliquant sur un segment, la _flèche_ itère entre ces états :
 - sens de circulation 
