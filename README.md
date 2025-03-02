@@ -84,7 +84,21 @@ Exemple d'URL Coplano : https://coplano.fr/new.html?geojson=https://cocarto.com/
 
 ## Phase II - Configuration des noeuds
 
-### Annotation des colonnes
+A ce stade, il faut avoir créé sa couche dans Cocarto, avoir chargé ses premiers points, et avoir construit une URL Coplano pour visualiser une première fois son plan.
+
+En ouvrant l'URL Coplano, il est possible que des amélioratoins du plan soient nécessaires. C'est l'objet de cette étape, qui consiste à :
+- nettoyer les noeuds (éventuellement, supprimer les doublons, en cas d'import OSM)
+- retoucher certains segments de rue
+- définir les transits
+
+Pour ce faire, il est recommandé d'ouvrir deux fenêtres navigateur, l'une sur son _URL Coplano_, l'autre sur _Cocarto_ avec sa couche ouverte. Le processus est alors le suivant :
+1. Aller sur l'URL Coplano
+2. Identifier des problèmes
+3. Aller sur Cocarto, faire des corrections
+4. Aller sur Coplano, recharger la page (F5) - le plan avec la nouvelle configuration apparaît
+5. Revenur à l'étape 2, tant que des problèmes sont présents
+
+### Annotation des colonnes dans Cocarto
 
 Chaque noeud est identifié au moyen d'un identifiant `id`, un nombre entier qui doit être unique (1, 2, 3, etc). L'`id` servira ensuite à définir les sens de circulation et les axes de transits.
 
