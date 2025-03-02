@@ -263,7 +263,6 @@ function processGeojson(geojson) {
 }
 
 function loadHostedGeojson(geojsonFilename) {
-    updateLocationWithGeojsonPath(geojsonFilename);
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
@@ -278,18 +277,23 @@ function loadHostedGeojson(geojsonFilename) {
     xhr.send();
 }
 
-const geojsonParamKey = "geojson";
+const remoteGeojsonParamKey = "geojson_url";
+const localGeojsonParamKey = "geojson";
+const localGeojsonPath = "../../geojson/";
 
-function updateLocationWithGeojsonPath(geojsonPath) {
+function updateLocationWithRemoteGeojsonPath(geojsonPath) {
     var url = new URL(window.location.href);
-    url.searchParams.set(geojsonParamKey, encodeURI(geojsonPath));
-    window.history.replaceState(null, null, url);
+    url.searchParams.set(remoteGeojsonParamKey, encodeURI(geojsonPath));
+    url.searchParams.delete(localGeojsonParamKey);
+    window.history.pushState(null, null, url);
 }
 
 function getGeojsonPathFromUrl() {
     const params = new URL(window.location.href).searchParams;
-    if (params.has(geojsonParamKey)) {
-        return decodeURI(params.get(geojsonParamKey));
+    if (params.has(remoteGeojsonParamKey)) {
+        return decodeURI(params.get(remoteGeojsonParamKey));
+    } else if (params.has(localGeojsonParamKey)) {
+        return localGeojsonPath + decodeURI(params.get(localGeojsonParamKey));
     } else {
         return null;
     }
@@ -313,13 +317,17 @@ fileInput.addEventListener('change', function() {
 const loadUrlInput = document.getElementById('loadFileFromUrl');
 const loadUrlField = document.getElementById('urlToLoadFrom');
 loadUrlInput.addEventListener('click', function() {
-    loadHostedGeojson(loadUrlField.value);
+    const geojsonUrl = loadUrlField.value;
+    updateLocationWithRemoteGeojsonPath(geojsonUrl);
+    loadHostedGeojson(geojsonUrl);
 });
 
 geojsonPathFromUrl = getGeojsonPathFromUrl();
 if (geojsonPathFromUrl) {
     console.log("going to load geojson from " + geojsonPathFromUrl);
-    loadUrlField.value = geojsonPathFromUrl;
+    if (geojsonPathFromUrl.startsWith("http")) {
+        loadUrlField.value = geojsonPathFromUrl;
+    }
     loadHostedGeojson(geojsonPathFromUrl);
 } else {
     console.log("no geojson url found");
