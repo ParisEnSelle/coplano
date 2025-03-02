@@ -24,15 +24,23 @@ Un exemple est visible ici : https://cocarto.com/fr/share/TGeknxKpH8CPTvu2
 
 ![Site cocarto: configuration du quartier Marx Dormoy à Paris 18](assets/cocarto-marx-dormoy.jpg)
 
+### Configuration manuelle dans Cocarto
 
-### Etapes
-
+Etapes (plusieurs heures) :
 1. Créer une nouvelle couche dans [cocarto.com](https://cocarto.com/)
 2. Ajouter les 7 colonnes listées ci-dessous
-3. Créer chacun des points ou "noeuds" (5-10 min)
-4. Remplir les 7 colonnes (30-45 min)
+3. Créer chacun des points ou "noeuds" (de 30 min à 1 heure)
+4. Remplir les 7 colonnes (de 1 à plusieurs heures)
 5. Exporter le fichier geojson et l'importer dans Coplano
 
+### Configuration dans Cocarto à l'aide de l'importateur
+
+Etapes (environ 20 minutes) :
+1. Créer une nouvelle couche dans [cocarto.com](https://cocarto.com/)
+2. Ajouter les 7 colonnes listées ci-dessous
+3. Sur l'[importateur Coplano-OSM](https://main--coplano-import-osm.netlify.app/), cliquer sur l'icône polygone, dessiner le périmètre du quartier à étudier, télécharger le geojson
+4. Sur [cocarto.com](https://cocarto.com/), cliquer sur _Importer_ et importer le fichier geojson
+5. Construire une URL d'accès à Coplano (voir ci-dessous) et ouvrir son plan
 
 ### Configuration : colonnes à ajouter
 
