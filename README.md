@@ -40,7 +40,7 @@ Etapes (environ 20 minutes) :
 2. Ajouter les 7 colonnes listées ci-dessous
 3. Sur l'[importateur Coplano-OSM](https://main--coplano-import-osm.netlify.app/), cliquer sur l'icône polygone, dessiner le périmètre du quartier à étudier, télécharger le geojson
 4. Sur [cocarto.com](https://cocarto.com/), cliquer sur _Importer_ et importer le fichier geojson
-5. Construire une URL d'accès à Coplano (voir ci-dessous) et ouvrir son plan
+5. Exporter le fichier geojson et l'importer dans Coplano, ou, éventuellement, construire une URL d'accès à Coplano (voir l'appendice)
 
 ### Configuration : colonnes à ajouter
 
@@ -63,30 +63,12 @@ Type texte:
 - les colonnes de type texte doivent toutes suivre le même format "21,25,26" c'est-à-dire une suite d'entiers séparés par des virgules.
 - contrairement à la capture d'écran, tous les noms de colonnes doivent être définis en minuscule
 
-### Construire une URL Coplano
-
-Format d'URL Coplano :
-
-    https://coplano.fr/new.html?geojson=<URL d'accès au geojson cocarto>?token=<token d'accès>
-
-L'URL Geojson Cocarto et le token s'obtiennent ainsi :
-- **URL Geojson Cocarto** : `Cocarto > Aller dans sa couche > Exporter > Clic-droit sur GeoJSON > Copier le lien`
-
-![Site cocarto: URL](assets/cocarto-geojson-link.png)
-
-- **Token** : `Cocarto > Aller dans sa couche > Partager > Liens > Nouveau lien > Rôle > Observateur > Description: "Lien Coplano" > Créer le lien de partage > Voir sur le lien la dernière partie après la dernière barre oblique et la copier (le token)`
-
-![Site cocarto: token](assets/cocarto-token.png)
-
-Par exemple, une URL Geojson Cocarto est `https://cocarto.com/fr/layers/03f73170-9dea-4006-879b-ec040f30a950.geojson` et pour un lien de partage `https://cocarto.com/fr/share/TGeknxKpH8CPTvu2`, le token serait `TGeknxKpH8CPTvu2`. Une fois l'URL du GeoJSON construite et le token obtenu, on peut les valider en combinant `<URL Geojson>?token=<token>`. En la collant dans la barre son navigateur, un fichier geojson doit être téléchargé (à faire dans une nouvelle fenêtre en mode incognito).
-
-Exemple d'URL Coplano : https://coplano.fr/new.html?geojson=https://cocarto.com/fr/layers/03f73170-9dea-4006-879b-ec040f30a950.geojson?token=yaRfz7Yx6hBrcLPH
 
 ## Phase II - Configuration des noeuds
 
-A ce stade, il faut avoir créé sa couche dans Cocarto, avoir chargé ses premiers points, et avoir construit une URL Coplano pour visualiser une première fois son plan.
+A ce stade, il faut avoir créé sa couche dans Cocarto, avoir chargé ses premiers points, et avoir visualisé une première fois son plan. Il est recommandé de construire une URL Coplano pour plus facilement itérer sur la configuration (voir l'appendice).
 
-En ouvrant l'URL Coplano, il est possible que des amélioratoins du plan soient nécessaires. C'est l'objet de cette étape, qui consiste à :
+En ouvrant Coplano, il est possible que des améliorations du plan soient nécessaires. C'est l'objet de cette étape, qui consiste à :
 - nettoyer les noeuds (éventuellement, supprimer les doublons, en cas d'import OSM)
 - retoucher certains segments de rue
 - définir les transits
@@ -95,7 +77,7 @@ Pour ce faire, il est recommandé d'ouvrir deux fenêtres navigateur, l'une sur 
 1. Aller sur l'URL Coplano
 2. Identifier des problèmes
 3. Aller sur Cocarto, faire des corrections
-4. Aller sur Coplano, recharger la page (F5) - le plan avec la nouvelle configuration apparaît
+4. Aller sur Coplano et recharger un nouveau geojson ou, si l'URL Cocarto est construite, recharger la page (F5) - pour afficher le plan avec la nouvelle configuration
 5. Revenur à l'étape 2, tant que des problèmes sont présents
 
 ### Annotation des colonnes dans Cocarto
@@ -137,6 +119,37 @@ En cliquant sur un segment, la _flèche_ itère entre ces états :
 - aucun sens de circulation
 
 L'état initial défini dans le geojson est en ![bleu](assets/blue.jpg), les autres états en ![vert](assets/green.jpg). En ![rouge](assets/red.jpg) s'affichent les rat runs.
+
+
+## Appendice - Construire une URL Coplano
+
+Attention, section technique ! Les étapes à effectuer ici sont manuelles, on travaillera à l'améliorer par la suite. L'idée est d'autoriser directement Coplano d'ouvrir le Geojson de Cocarto, avec les droits d'accès nécessaires. On vous décrit comment ci-dessous.
+
+Le format d'URL Coplano que l'on cherche à obtenir est :
+
+    https://coplano.fr/new.html?geojson=<URL d'accès au geojson cocarto>?token=<token d'accès>
+
+L'URL Geojson Cocarto et le token s'obtiennent ainsi :
+- **URL Geojson Cocarto** : `Cocarto > Aller dans sa couche > Exporter > Clic-droit sur GeoJSON > Copier le lien`
+
+![Site cocarto: URL](assets/cocarto-geojson-link.png)
+
+- **Token** : `Cocarto > Aller dans sa couche > Partager > Liens > Nouveau lien > Rôle > Observateur > Description: "Lien Coplano" > Créer le lien de partage > Voir sur le lien la dernière partie après la dernière barre oblique et la copier (le token)`
+
+![Site cocarto: token](assets/cocarto-token.png)
+
+Par exemple, une URL Geojson Cocarto est `https://cocarto.com/fr/layers/03f73170-9dea-4006-879b-ec040f30a950.geojson` et pour un lien de partage `https://cocarto.com/fr/share/TGeknxKpH8CPTvu2`, le token serait `TGeknxKpH8CPTvu2`.
+
+### Comment valider l'URL Geojson Cocarto et le token ?
+ 1. Construire une URL Geojson avec token en combinant `<URL Geojson>?token=<token>`
+ 2. Ouvrir une nouvelle page de navigateur en mode incognito
+ 3. Coller l'URL construite et appuyer sur Entrer
+ 4. Si le token n'est pas fourni correctement, un message d'erreur s'affiche. Sinon, un fichier geojson est téléchargé, ce qui veut dire que l'URL geojson Cocarto et le token sont bien construits.
+
+### Comment valider l'URL Coplano ?
+
+En combinant l'adresse de Coplano, l'URL de geojson et le token comme indiqué ci-dessous, Coplano doit parvenir à ouvrir le plan tel quel configuré dans Cocarto. Voici un exemple d'URL Coplano : https://coplano.fr/new.html?geojson=https://cocarto.com/fr/layers/03f73170-9dea-4006-879b-ec040f30a950.geojson?token=yaRfz7Yx6hBrcLPH
+
 
 # Comment contribuer au projet ?
 
