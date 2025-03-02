@@ -55,6 +55,24 @@ Type texte:
 - les colonnes de type texte doivent toutes suivre le même format "21,25,26" c'est-à-dire une suite d'entiers séparés par des virgules.
 - contrairement à la capture d'écran, tous les noms de colonnes doivent être définis en minuscule
 
+### Construire une URL Coplano
+
+Format d'URL Coplano :
+
+    https://coplano.fr/new.html?geojson=<URL d'accès au geojson cocarto>?token=<token d'accès>
+
+L'URL Geojson Cocarto et le token s'obtiennent ainsi :
+- **URL Geojson Cocarto** : `Cocarto > Aller dans sa couche > Exporter > Clic-droit sur GeoJSON > Copier le lien`
+
+![Site cocarto: URL](assets/cocarto-geojson-link.png)
+
+- **Token** : `Cocarto > Aller dans sa couche > Partager > Liens > Nouveau lien > Rôle > Observateur > Description: "Lien Coplano" > Créer le lien de partage > Voir sur le lien la dernière partie après la dernière barre oblique et la copier (le token)`
+
+![Site cocarto: token](assets/cocarto-token.png)
+
+Par exemple, une URL Geojson Cocarto est `https://cocarto.com/fr/layers/03f73170-9dea-4006-879b-ec040f30a950.geojson` et pour un lien de partage `https://cocarto.com/fr/share/TGeknxKpH8CPTvu2`, le token serait `TGeknxKpH8CPTvu2`. Une fois l'URL du GeoJSON construite et le token obtenu, on peut les valider en combinant `<URL Geojson>?token=<token>`. En la collant dans la barre son navigateur, un fichier geojson doit être téléchargé (à faire dans une nouvelle fenêtre en mode incognito).
+
+Exemple d'URL Coplano : https://coplano.fr/new.html?geojson=https://cocarto.com/fr/layers/03f73170-9dea-4006-879b-ec040f30a950.geojson?token=yaRfz7Yx6hBrcLPH
 
 ## Phase II - Configuration des noeuds
 
@@ -102,7 +120,7 @@ L'état initial défini dans le geojson est en ![bleu](assets/blue.jpg), les aut
 
 ## Ajouter un plan ou une version d'un plan
 
-A venir
+A venir. Pour le moment, il est recommandé de construire et partager l'URL d'accès Coplano.
 
 ## Contribuer au code
 
