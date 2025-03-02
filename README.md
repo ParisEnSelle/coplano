@@ -37,16 +37,18 @@ Un exemple est visible ici : https://cocarto.com/fr/share/TGeknxKpH8CPTvu2
 
 Type nombre entier:
 - `id`
+- `osm_id`
 
 Type booléen:
 - `transit_node`
 
 Type texte:
 - `local_street`
-- `local_street_double_way` _(optionnel)_
-- `local_street_modal_filter` _(optionnel)_
-- `transit_exceptions` _(optionnel)_
+- `local_street_double_way`
+- `local_street_modal_filter`
+- `transit_whitelist`
 - `transit_street` _(optionnel)_
+- `transit_blacklist` _(optionnel)_
 
 *Notes :*
 - les colonnes de type texte doivent toutes suivre le même format "21,25,26" c'est-à-dire une suite d'entiers séparés par des virgules.
@@ -65,14 +67,15 @@ Chaque noeud est identifié au moyen d'un identifiant `id`, un nombre entier qui
 
 `transit_node` est utilisé pour définir un noeud de transit.
 
-`transit_exceptions` et `transit_street` permettent de raffiner les axes de transits et les transits pertinents.
+`transit_whitelist`, `transit_blacklist` et `transit_street` permettent de raffiner les axes de transits et les transits pertinents.
 
 ### Comment définir les transits pertinents ?
 
 Par défaut, l'algorithme cherche **tous les chemins possibles pour relier un noeud de transit à un autre noeud de transit par des segments de rue locaux**.
 
-On peut affiner cette recherche par deux moyens :
-- `transit_exceptions` : il peut paraître peu pertinent de relier tel noeud de transit à tel noeud de transit. On peut alors définir des exceptions. Si 1 et 14 sont des noeuds de transit mais qu'on considère que les relier n'est pas pertinent et encombrerait la représentation du plan, on peut ajouter la valeur "14" dans _transit_exceptions_ à la ligne où _id_ vaut 1. L'algorithme ignorera les rat runs démarrant de 1 et aboutissant à 14.
+On peut affiner cette recherche par trois moyens :
+- `transit_whitelist` : on définit explicitement vers quel noeud de "destination" l'algorithme cherchera à relier le noeud origine. C'est l'option la plus simple. A noter, la valeur "0" est une exception et désactive toute recherche.
+- `transit_blacklist` : il peut paraître peu pertinent de relier tel noeud de transit à tel noeud de transit. On peut alors définir des exceptions. Si 1 et 14 sont des noeuds de transit mais qu'on considère que les relier n'est pas pertinent et encombrerait la représentation du plan, on peut ajouter la valeur "14" dans _transit_exceptions_ à la ligne où _id_ vaut 1. L'algorithme ignorera les rat runs démarrant de 1 et aboutissant à 14.
 - `transit_street` : si des noeuds de transit sont des noeuds successifs d'un même boulevard, on peut considérer inutile de vouloir montrer un rat run de l'un de ces noeuds à l'autre. On peut alors relier ces noeuds entre eux par _transit_street_. Ces noeuds feront alors partie d'un même "axe de transit" ou _transit set_, et l'algorithme ne cherchera pas à relier 2 noeuds du même axe de transit. L'algorithme cherchera par contre à relier des axes de transit différents entre eux, de tel sorte qu'il passe par des noeuds locaux.
 
 ### Erreurs au chargement
